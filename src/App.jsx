@@ -2,306 +2,506 @@
 
 // ── Palette & globals ──────────────────────────────────────────────────────
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=MS+Sans+Serif&display=swap');
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --ink:    #0a0f1e;
-  --ink2:   #1c243a;
-  --slate:  #3d4966;
-  --muted:  #8892a4;
-  --line:   #e4e8f0;
-  --bg:     #f7f8fc;
-  --white:  #ffffff;
-  --teal:   #00c2a8;
-  --teal2:  #00a890;
-  --amber:  #f59e0b;
-  --red:    #ef4444;
-  --green:  #10b981;
-  --blue:   #3b82f6;
-  --purple: #8b5cf6;
-  --r:      12px;
-  --r2:     20px;
-  --sh:     0 4px 24px rgba(0,0,0,.07);
-  --sh2:    0 8px 40px rgba(0,0,0,.12);
+  --win-gray:       #c0c0c0;
+  --win-dark-gray:  #808080;
+  --win-light:      #dfdfdf;
+  --win-highlight:  #ffffff;
+  --win-shadow:     #000000;
+  --win-blue:       #000080;
+  --win-blue-light: #0000ff;
+  --win-title-active: linear-gradient(90deg, #0a246a 0%, #a6caf0 100%);
+  --win-title-text: #ffffff;
+  --win-green:      #008000;
+  --win-red:        #ff0000;
+  --win-yellow:     #ffff00;
+  --win-desktop:    #008080;
+  --r: 0px;
 }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'DM Sans', sans-serif;
-  background: var(--bg);
-  color: var(--ink);
+  font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, sans-serif;
+  background: var(--win-desktop);
+  color: #000000;
   min-height: 100vh;
-  font-size: 15px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  font-size: 11px;
+  line-height: 1.4;
+  image-rendering: pixelated;
 }
 
-h1,h2,h3,h4,h5,h6 { font-family: 'Syne', sans-serif; line-height: 1.2; }
+h1,h2,h3,h4,h5,h6 { font-family: 'MS Sans Serif', 'Microsoft Sans Serif', Tahoma, sans-serif; line-height: 1.2; font-weight: bold; }
+
+/* ═══════════════════════════════════════
+   WINDOWS 2000 UI SYSTEM
+   ═══════════════════════════════════════ */
+
+/* Win32 border mixin helpers */
+/* raised: light top/left, dark bottom/right */
+/* sunken: dark top/left, light bottom/right */
 
 /* ── Layout ── */
-.app { display: flex; flex-direction: column; min-height: 100vh; }
-.main { flex: 1; }
+.app { display: flex; flex-direction: column; min-height: 100vh; background: var(--win-gray); }
+.main { flex: 1; padding: 8px; }
 
-/* ── Nav ── */
+/* ── Win2k Window Container ── */
+.win-window {
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-bottom: 2px solid var(--win-shadow);
+  border-right: 2px solid var(--win-shadow);
+  box-shadow: 1px 1px 0 0 var(--win-dark-gray) inset, -1px -1px 0 0 var(--win-light) inset;
+}
+
+.win-window-inner {
+  border-top: 1px solid var(--win-light);
+  border-left: 1px solid var(--win-light);
+  border-bottom: 1px solid var(--win-dark-gray);
+  border-right: 1px solid var(--win-dark-gray);
+}
+
+/* ── Taskbar ── */
 .nav {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(247,248,252,.92);
-  backdrop-filter: blur(14px);
-  border-bottom: 1px solid var(--line);
-  padding: 0 32px;
-  height: 64px;
+  position: sticky; top: 0; z-index: 1000;
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-highlight);
+  border-bottom: 2px solid var(--win-shadow);
+  padding: 2px 4px;
+  height: 30px;
   display: flex; align-items: center; justify-content: space-between;
 }
 .nav-brand {
-  display: flex; align-items: center; gap: 10px;
-  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px;
-  color: var(--ink); text-decoration: none; cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  font-weight: bold; font-size: 12px;
+  color: #000; cursor: pointer;
+  background: linear-gradient(90deg, var(--win-blue) 0%, #1084d0 100%);
+  color: #fff;
+  padding: 2px 8px;
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
+  height: 22px;
 }
-.nav-brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); }
-.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-brand:hover { filter: brightness(1.1); }
+.nav-brand-dot { display:none; }
+.nav-links { display: flex; align-items: center; gap: 1px; flex:1; padding: 0 8px; }
 .nav-link {
-  padding: 6px 14px; border-radius: 8px; font-size: 14px; font-weight: 500;
-  color: var(--slate); cursor: pointer; transition: all .2s; border: none;
-  background: transparent; font-family: 'DM Sans', sans-serif;
+  padding: 2px 8px; font-size: 11px; font-weight: normal;
+  color: #000; cursor: pointer; border: 1px solid transparent;
+  background: var(--win-gray); font-family: inherit;
+  height: 22px; display: flex; align-items: center;
 }
-.nav-link:hover { background: var(--line); color: var(--ink); }
-.nav-link.active { color: var(--teal); background: rgba(0,194,168,.08); }
-.nav-actions { display: flex; gap: 8px; }
+.nav-link:hover {
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
+}
+.nav-link.active {
+  background: var(--win-light);
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-bottom: 1px solid var(--win-highlight);
+  border-right: 1px solid var(--win-highlight);
+}
+.nav-actions { display: flex; gap: 2px; }
 
-/* ── Buttons ── */
+/* ── Buttons (Win2k raised style) ── */
 .btn {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  padding: 10px 22px; border-radius: var(--r); font-weight: 600; font-size: 14px;
-  cursor: pointer; transition: all .2s; border: none; font-family: 'DM Sans', sans-serif;
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 3px 12px;
+  font-size: 11px; font-weight: normal; font-family: inherit;
+  cursor: pointer;
+  background: var(--win-gray);
+  color: #000;
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-bottom: 2px solid var(--win-shadow);
+  border-right: 2px solid var(--win-shadow);
+  box-shadow: 1px 1px 0 0 var(--win-dark-gray);
   white-space: nowrap; text-decoration: none;
+  min-height: 23px;
 }
-.btn-primary { background: var(--teal); color: #fff; }
-.btn-primary:hover { background: var(--teal2); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,194,168,.35); }
-.btn-secondary { background: var(--white); color: var(--ink); border: 1.5px solid var(--line); }
-.btn-secondary:hover { border-color: var(--teal); color: var(--teal); background: rgba(0,194,168,.04); }
-.btn-ghost { background: transparent; color: var(--slate); }
-.btn-ghost:hover { color: var(--ink); background: var(--line); }
-.btn-dark { background: var(--ink); color: #fff; }
-.btn-dark:hover { background: var(--ink2); transform: translateY(-1px); box-shadow: var(--sh2); }
-.btn-danger { background: var(--red); color: #fff; }
-.btn-sm { padding: 6px 14px; font-size: 13px; }
-.btn-lg { padding: 14px 32px; font-size: 16px; border-radius: 14px; }
+.btn:hover { filter: brightness(0.97); }
+.btn:active, .btn:focus {
+  border-top: 2px solid var(--win-shadow);
+  border-left: 2px solid var(--win-shadow);
+  border-bottom: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-highlight);
+  box-shadow: none;
+}
+.btn-primary { background: var(--win-gray); color: #000; font-weight: bold; }
+.btn-primary:active { color: #000; }
+.btn-secondary { background: var(--win-gray); color: #000; }
+.btn-ghost { background: transparent; color: #000; border-color: transparent; box-shadow: none; }
+.btn-ghost:hover { background: var(--win-gray); border-color: var(--win-dark-gray); }
+.btn-dark { background: var(--win-blue); color: #fff; }
+.btn-danger { background: var(--win-gray); color: var(--win-red); font-weight: bold; }
+.btn-sm { padding: 2px 8px; font-size: 11px; min-height: 20px; }
+.btn-lg { padding: 4px 20px; font-size: 12px; font-weight: bold; }
 .btn-full { width: 100%; }
+.btn:disabled { color: var(--win-dark-gray); cursor: not-allowed; }
+.btn:disabled:after { content:''; position:absolute; }
 
-/* ── Cards ── */
+/* ── Cards / Group Boxes ── */
 .card {
-  background: var(--white); border-radius: var(--r2);
-  border: 1px solid var(--line); box-shadow: var(--sh); padding: 28px;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-dark-gray);
+  border-left: 1px solid var(--win-dark-gray);
+  border-bottom: 1px solid var(--win-highlight);
+  border-right: 1px solid var(--win-highlight);
+  padding: 12px;
+  margin-bottom: 8px;
 }
-.card-sm { padding: 20px; border-radius: var(--r); }
+.card-sm { padding: 8px; }
 
 /* ── Section ── */
-.section { padding: 80px 0; }
-.section-sm { padding: 48px 0; }
-.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
-.container-sm { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 16px 0; }
+.section-sm { padding: 8px 0; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 8px; }
+.container-sm { max-width: 720px; margin: 0 auto; padding: 0 8px; }
 
 /* ── Grid ── */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
 
 /* ── Badge ── */
 .badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 0 6px; font-size: 11px; font-weight: normal;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-dark-gray);
+  border-left: 1px solid var(--win-dark-gray);
+  border-bottom: 1px solid var(--win-highlight);
+  border-right: 1px solid var(--win-highlight);
 }
-.badge-teal { background: rgba(0,194,168,.1); color: var(--teal2); }
-.badge-amber { background: rgba(245,158,11,.1); color: #d97706; }
-.badge-red { background: rgba(239,68,68,.1); color: var(--red); }
-.badge-green { background: rgba(16,185,129,.1); color: var(--green); }
-.badge-blue { background: rgba(59,130,246,.1); color: var(--blue); }
-.badge-purple { background: rgba(139,92,246,.1); color: var(--purple); }
-.badge-gray { background: var(--line); color: var(--slate); }
+.badge-blue, .badge-blue { background: var(--win-blue); color: #fff; border-color: var(--win-blue); }
+.badge-amber { background: var(--win-gray); color: #000; }
+.badge-red { background: var(--win-gray); color: var(--win-red); }
+.badge-green { background: var(--win-gray); color: var(--win-green); }
+.badge-gray { background: var(--win-gray); color: #000; }
+.badge-purple { background: var(--win-gray); color: #800080; }
 
-/* ── Form ── */
-label { font-size: 13px; font-weight: 600; color: var(--ink2); display: block; margin-bottom: 6px; }
+/* ── Form (Win2k sunken inputs) ── */
+label { font-size: 11px; font-weight: normal; color: #000; display: block; margin-bottom: 3px; }
 input, textarea, select {
-  width: 100%; padding: 10px 14px; border: 1.5px solid var(--line); border-radius: var(--r);
-  font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink);
-  background: var(--white); transition: border-color .2s; outline: none;
+  width: 100%; padding: 3px 5px;
+  border-top: 2px solid var(--win-shadow);
+  border-left: 2px solid var(--win-shadow);
+  border-bottom: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-highlight);
+  box-shadow: inset 1px 1px 0 var(--win-dark-gray);
+  font-family: inherit; font-size: 11px; color: #000;
+  background: #fff; outline: none;
 }
-input:focus, textarea:focus, select:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,194,168,.12); }
-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
-.field { margin-bottom: 20px; }
+input:focus, textarea:focus, select:focus { outline: 2px solid var(--win-blue); outline-offset: 0; }
+textarea { resize: vertical; min-height: 80px; line-height: 1.4; }
+.field { margin-bottom: 10px; }
 
 /* ── Upload Zone ── */
 .upload-zone {
-  border: 2px dashed var(--line); border-radius: var(--r2); padding: 48px 32px;
-  text-align: center; cursor: pointer; transition: all .2s;
-  background: var(--bg);
+  border: 2px dashed var(--win-dark-gray);
+  padding: 24px 16px;
+  text-align: center; cursor: pointer;
+  background: #fff;
 }
-.upload-zone:hover, .upload-zone.drag { border-color: var(--teal); background: rgba(0,194,168,.04); }
-.upload-icon { font-size: 40px; margin-bottom: 12px; }
+.upload-zone:hover, .upload-zone.drag {
+  background: #e0e0ff;
+  border-color: var(--win-blue);
+}
+.upload-icon { font-size: 28px; margin-bottom: 8px; }
 
 /* ── Score Circle ── */
 .score-circle {
-  width: 140px; height: 140px; border-radius: 50%;
+  width: 120px; height: 120px; border-radius: 50%;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   position: relative; margin: 0 auto;
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-shadow);
+  border-left: 2px solid var(--win-shadow);
+  border-bottom: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-highlight);
 }
 .score-ring { position: absolute; top:0; left:0; transform: rotate(-90deg); }
-.score-val { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; }
-.score-lbl { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+.score-val { font-size: 28px; font-weight: bold; }
+.score-lbl { font-size: 9px; font-weight: normal; color: #000; text-transform: uppercase; }
 
 /* ── Progress bar ── */
-.pbar-wrap { margin-bottom: 14px; }
-.pbar-head { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
-.pbar-track { height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; }
-.pbar-fill { height: 100%; border-radius: 4px; transition: width 1s cubic-bezier(.16,1,.3,1); }
+.pbar-wrap { margin-bottom: 8px; }
+.pbar-head { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; }
+.pbar-track {
+  height: 14px;
+  background: #fff;
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-bottom: 1px solid var(--win-highlight);
+  border-right: 1px solid var(--win-highlight);
+  overflow: hidden;
+}
+.pbar-fill { height: 100%; background: var(--win-blue); transition: width 1s linear; }
 
 /* ── Tags ── */
-.tag-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.tag-wrap { display: flex; flex-wrap: wrap; gap: 4px; }
 .tag {
-  padding: 5px 12px; border-radius: 20px; font-size: 13px; font-weight: 500;
-  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 8px; font-size: 11px; font-weight: normal;
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
 }
-.tag-green { background: rgba(16,185,129,.1); color: var(--green); }
-.tag-red { background: rgba(239,68,68,.1); color: var(--red); }
-.tag-blue { background: rgba(59,130,246,.1); color: var(--blue); }
-.tag-gray { background: var(--line); color: var(--slate); }
-.tag-amber { background: rgba(245,158,11,.1); color: #d97706; }
+.tag-green { color: var(--win-green); }
+.tag-red { color: var(--win-red); }
+.tag-blue { color: var(--win-blue-light); }
+.tag-gray { color: #000; }
+.tag-amber { color: #804000; }
 
-/* ── Tabs ── */
-.tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--line); margin-bottom: 24px; }
+/* ── Tabs (Win2k tab control) ── */
+.tabs { display: flex; gap: 0; border-bottom: 2px solid var(--win-shadow); margin-bottom: 12px; }
 .tab {
-  padding: 10px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
-  border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all .2s;
-  color: var(--muted); background: none; border-left: none; border-right: none; border-top: none;
-  font-family: 'DM Sans', sans-serif;
+  padding: 4px 12px; font-size: 11px; font-weight: normal; cursor: pointer;
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-shadow);
+  border-bottom: none;
+  margin-bottom: -2px; margin-right: 2px;
+  color: #000; font-family: inherit;
 }
-.tab:hover { color: var(--ink); }
-.tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.tab:hover { background: var(--win-light); }
+.tab.active {
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-shadow);
+  border-bottom: 2px solid var(--win-gray);
+  z-index: 1; position: relative;
+  padding-bottom: 6px;
+}
 
 /* ── Alert ── */
 .alert {
-  padding: 14px 18px; border-radius: var(--r); font-size: 14px;
-  display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px;
+  padding: 6px 10px; font-size: 11px;
+  display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-dark-gray);
+  border-left: 1px solid var(--win-dark-gray);
+  border-bottom: 1px solid var(--win-highlight);
+  border-right: 1px solid var(--win-highlight);
 }
-.alert-info { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.2); color: #1d4ed8; }
-.alert-warn { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.2); color: #92400e; }
-.alert-success { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.2); color: #065f46; }
-.alert-danger { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.2); color: #991b1b; }
+.alert-info { background: #e0e8ff; color: #000050; }
+.alert-warn { background: #ffffc0; color: #402000; }
+.alert-success { background: #c0ffc0; color: #004000; }
+.alert-danger { background: #ffc0c0; color: #400000; }
 
 /* ── Stat card ── */
-.stat-card { text-align: center; padding: 24px; }
-.stat-num { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; color: var(--teal); }
-.stat-desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+.stat-card { text-align: center; padding: 12px; }
+.stat-num { font-size: 24px; font-weight: bold; color: var(--win-blue); }
+.stat-desc { font-size: 11px; color: #000; margin-top: 2px; }
 
 /* ── Timeline ── */
-.timeline { position: relative; padding-left: 32px; }
-.timeline::before { content:''; position:absolute; left:11px; top:0; bottom:0; width:2px; background:var(--line); }
-.tl-item { position:relative; margin-bottom:28px; }
+.timeline { position: relative; padding-left: 24px; }
+.timeline::before { content:''; position:absolute; left:8px; top:0; bottom:0; width:1px; background:var(--win-dark-gray); }
+.tl-item { position:relative; margin-bottom:16px; }
 .tl-dot {
-  position:absolute; left:-32px; top:4px; width:24px; height:24px;
-  border-radius:50%; background:var(--teal); display:flex; align-items:center; justify-content:center;
-  font-size:12px; color:#fff; font-weight:700;
+  position:absolute; left:-24px; top:2px; width:18px; height:18px;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; color:#000; font-weight:bold;
 }
 
 /* ── Pricing ── */
-.pricing-card { border-radius: var(--r2); padding: 36px; border: 2px solid var(--line); background: var(--white); position:relative; }
-.pricing-card.featured { border-color: var(--teal); background: linear-gradient(135deg,rgba(0,194,168,.04),rgba(0,194,168,.01)); }
-.pricing-badge { position:absolute; top:-14px; left:50%; transform:translateX(-50%); white-space:nowrap; }
-.price-num { font-family:'Syne',sans-serif; font-size:48px; font-weight:800; }
-.price-per { font-size:14px; color:var(--muted); }
+.pricing-card {
+  padding: 16px;
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-bottom: 2px solid var(--win-shadow);
+  border-right: 2px solid var(--win-shadow);
+  position: relative;
+}
+.pricing-card.featured {
+  background: #dde9ff;
+  border: 2px solid var(--win-blue);
+}
+.pricing-badge { position:absolute; top:-10px; left:50%; transform:translateX(-50%); white-space:nowrap; }
+.price-num { font-size: 36px; font-weight: bold; }
+.price-per { font-size: 11px; color: #000; }
 
-/* ── Footer ── */
-.footer { background: var(--ink); color: rgba(255,255,255,.6); padding: 48px 0 28px; }
-.footer-brand { font-family:'Syne',sans-serif; font-weight:800; font-size:20px; color:#fff; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
-.footer-links { display:flex; flex-direction:column; gap:8px; }
-.footer-link { color:rgba(255,255,255,.5); text-decoration:none; font-size:14px; cursor:pointer; transition:color .2s; background:none; border:none; font-family:'DM Sans',sans-serif; }
-.footer-link:hover { color:#fff; }
-.footer-bottom { border-top:1px solid rgba(255,255,255,.1); margin-top:40px; padding-top:20px; text-align:center; font-size:13px; }
+/* ── Title bar (Win2k window chrome) ── */
+.win-title-bar {
+  background: var(--win-title-active);
+  color: var(--win-title-text);
+  font-weight: bold;
+  font-size: 11px;
+  padding: 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+}
+.win-title-icon { margin-right: 4px; font-size: 12px; }
+.win-title-buttons { display: flex; gap: 2px; }
+.win-title-btn {
+  width: 16px; height: 14px;
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
+  font-size: 9px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: #000; font-family: 'Wingdings', 'Webdings', sans-serif;
+}
+.win-title-btn:hover { background: var(--win-light); }
+.win-title-btn.close:hover { background: #c0392b; color: #fff; }
 
-/* ── Hero ── */
+/* ── Footer / Statusbar ── */
+.footer {
+  background: var(--win-gray);
+  border-top: 2px solid var(--win-highlight);
+  padding: 8px 0 4px;
+  color: #000;
+}
+.footer-brand { font-weight: bold; font-size: 12px; color: #000; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+.footer-links { display: flex; flex-direction: column; gap: 2px; }
+.footer-link { color: var(--win-blue-light); text-decoration: underline; font-size: 11px; cursor: pointer; background: none; border: none; font-family: inherit; text-align: left; padding: 0; }
+.footer-link:hover { color: var(--win-red); }
+.footer-bottom { border-top: 1px solid var(--win-dark-gray); margin-top: 8px; padding-top: 4px; text-align: center; font-size: 11px; }
+
+/* ── Hero (Win2k window style) ── */
 .hero {
-  background: linear-gradient(135deg, #0a0f1e 0%, #0f1a30 50%, #0a1628 100%);
-  padding: 100px 0 90px; position: relative; overflow: hidden;
+  background: var(--win-gray);
+  padding: 12px 0;
+  position: relative;
 }
-.hero::before {
-  content:''; position:absolute; inset:0;
-  background: radial-gradient(ellipse 60% 50% at 70% 50%, rgba(0,194,168,.15) 0%, transparent 70%);
-}
-.hero-grid { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; position:relative; }
-.hero-eyebrow { font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--teal); margin-bottom:16px; }
-.hero-h1 { font-size:56px; font-weight:800; color:#fff; line-height:1.05; margin-bottom:20px; }
-.hero-sub { font-size:17px; color:rgba(255,255,255,.6); line-height:1.7; margin-bottom:36px; max-width:480px; }
-.hero-actions { display:flex; gap:12px; flex-wrap:wrap; }
+.hero::before { display: none; }
+.hero-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; align-items:start; position:relative; }
+.hero-eyebrow { font-size:11px; font-weight:bold; text-transform:uppercase; color:var(--win-blue); margin-bottom:8px; }
+.hero-h1 { font-size:18px; font-weight:bold; color:#000; line-height:1.3; margin-bottom:10px; }
+.hero-sub { font-size:11px; color:#000; line-height:1.5; margin-bottom:12px; }
+.hero-actions { display:flex; gap:6px; flex-wrap:wrap; }
 .hero-visual {
-  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 24px; padding: 28px; backdrop-filter: blur(10px);
+  background: #fff;
+  border-top: 2px solid var(--win-shadow);
+  border-left: 2px solid var(--win-shadow);
+  border-bottom: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-highlight);
+  padding: 12px;
 }
-.hero-score-row { display:flex; justify-content:space-around; margin-bottom:20px; }
+.hero-score-row { display:flex; justify-content:space-around; margin-bottom:12px; }
 .hero-metric { text-align:center; }
-.hero-metric-val { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--teal); }
-.hero-metric-lbl { font-size:11px; color:rgba(255,255,255,.4); margin-top:2px; }
-.hero-bar-row { margin-bottom:10px; }
-.hero-bar-lbl { display:flex; justify-content:space-between; font-size:12px; color:rgba(255,255,255,.5); margin-bottom:5px; }
-.hero-bar-track { height:6px; background:rgba(255,255,255,.08); border-radius:3px; overflow:hidden; }
-.hero-bar-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,var(--teal),#00e5c8); }
+.hero-metric-val { font-size:20px; font-weight:bold; color:var(--win-blue); }
+.hero-metric-lbl { font-size:10px; color:#000; margin-top:1px; }
+.hero-bar-row { margin-bottom:6px; }
+.hero-bar-lbl { display:flex; justify-content:space-between; font-size:10px; color:#000; margin-bottom:2px; }
+.hero-bar-track { height:12px; background:#fff; border-top:1px solid var(--win-shadow); border-left:1px solid var(--win-shadow); border-bottom:1px solid var(--win-highlight); border-right:1px solid var(--win-highlight); overflow:hidden; }
+.hero-bar-fill { height:100%; background: var(--win-blue); }
 
 /* ── Step cards ── */
-.step-num { width:44px; height:44px; border-radius:12px; background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:16px; margin-bottom:14px; }
+.step-num { width:24px; height:24px; background:var(--win-gray); border-top:2px solid var(--win-highlight); border-left:2px solid var(--win-highlight); border-bottom:2px solid var(--win-shadow); border-right:2px solid var(--win-shadow); color:#000; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; margin-bottom:8px; }
 
 /* ── Feature icon ── */
-.feat-icon { font-size:28px; margin-bottom:14px; width:56px; height:56px; border-radius:14px; background:rgba(0,194,168,.1); display:flex; align-items:center; justify-content:center; }
+.feat-icon { font-size:20px; margin-bottom:8px; width:36px; height:36px; background:var(--win-gray); border-top:1px solid var(--win-highlight); border-left:1px solid var(--win-highlight); border-bottom:1px solid var(--win-shadow); border-right:1px solid var(--win-shadow); display:flex; align-items:center; justify-content:center; }
 
 /* ── Testimonial ── */
 .testimonial { position:relative; }
-.testi-quote { font-size:48px; color:var(--teal); line-height:1; margin-bottom:8px; }
-.testi-author { display:flex; align-items:center; gap:12px; margin-top:16px; }
-.testi-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:700; font-size:15px; color:#fff; }
+.testi-quote { font-size:24px; color:var(--win-blue); line-height:1; margin-bottom:4px; }
+.testi-author { display:flex; align-items:center; gap:8px; margin-top:8px; }
+.testi-avatar { width:32px; height:32px; background:var(--win-gray); border-top:1px solid var(--win-shadow); border-left:1px solid var(--win-shadow); border-bottom:1px solid var(--win-highlight); border-right:1px solid var(--win-highlight); display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:12px; color:#000; }
 
-/* ── Page header ── */
-.page-header { padding: 52px 0 40px; border-bottom: 1px solid var(--line); background: var(--white); margin-bottom: 40px; }
-.page-header h1 { font-size: 36px; }
-.page-header p { color: var(--muted); margin-top: 8px; font-size: 16px; }
-.breadcrumb { display:flex; gap:8px; align-items:center; font-size:13px; color:var(--muted); margin-bottom:14px; }
-.breadcrumb-sep { color:var(--line); }
+/* ── Page header (Win2k title bar) ── */
+.page-header {
+  padding: 0 0 8px 0;
+  margin-bottom: 8px;
+}
+.page-header h1 { font-size: 14px; font-weight: bold; }
+.page-header p { color: #000; margin-top: 4px; font-size: 11px; }
+.breadcrumb { display:flex; gap:4px; align-items:center; font-size:11px; color: var(--win-blue-light); margin-bottom:6px; }
+.breadcrumb span { cursor:pointer; text-decoration:underline; }
+.breadcrumb span:last-child { text-decoration:none; color: #000; }
+.breadcrumb-sep { color: var(--win-dark-gray); text-decoration:none !important; }
 
 /* ── Dashboard ── */
-.dash-stat { display:flex; align-items:center; gap:16px; }
-.dash-stat-icon { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; }
-.dash-stat-val { font-family:'Syne',sans-serif; font-size:26px; font-weight:800; }
-.dash-stat-lbl { font-size:13px; color:var(--muted); }
+.dash-stat { display:flex; align-items:center; gap:8px; }
+.dash-stat-icon { width:32px; height:32px; background:var(--win-gray); border-top:1px solid var(--win-highlight); border-left:1px solid var(--win-highlight); border-bottom:1px solid var(--win-shadow); border-right:1px solid var(--win-shadow); display:flex; align-items:center; justify-content:center; font-size:16px; }
+.dash-stat-val { font-size:20px; font-weight:bold; }
+.dash-stat-lbl { font-size:11px; color:#000; }
 
 /* ── CV Preview ── */
 .cv-preview {
-  background:#fff; border:1px solid var(--line); border-radius:8px; padding:24px;
-  font-size:12px; line-height:1.5; color:#111;
+  background:#fff; border:2px inset var(--win-gray); padding:12px;
+  font-size:11px; line-height:1.4; color:#000;
 }
-.cv-preview h2 { font-size:16px; border-bottom:2px solid #0a0f1e; padding-bottom:4px; margin:16px 0 8px; }
-.cv-preview h3 { font-size:14px; font-weight:700; }
+.cv-preview h2 { font-size:12px; border-bottom:1px solid #000; padding-bottom:2px; margin:8px 0 4px; }
+.cv-preview h3 { font-size:11px; font-weight:bold; }
 
 /* ── Section title ── */
-.section-title { font-size: 36px; font-weight: 800; margin-bottom: 12px; }
-.section-sub { font-size: 16px; color: var(--muted); margin-bottom: 48px; max-width: 520px; }
+.section-title { font-size: 16px; font-weight: bold; margin-bottom: 8px; }
+.section-sub { font-size: 11px; color: #000; margin-bottom: 16px; }
 
 /* ── Anim ── */
-@keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp { from{opacity:0} to{opacity:1} }
 @keyframes spin { to{transform:rotate(360deg)} }
-.fade-up { animation: fadeUp .5s ease both; }
-.spinner { width:40px; height:40px; border:3px solid var(--line); border-top-color:var(--teal); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto; }
+.fade-up { animation: fadeUp .2s ease both; }
+.spinner {
+  width: 200px; height: 16px;
+  background: repeating-linear-gradient(90deg, var(--win-blue) 0%, var(--win-blue) 10%, #6699ff 10%, #6699ff 20%);
+  background-size: 40px 100%;
+  animation: marquee 1s linear infinite;
+  margin: 8px auto;
+  border-top:1px solid var(--win-shadow); border-left:1px solid var(--win-shadow);
+  border-bottom:1px solid var(--win-highlight); border-right:1px solid var(--win-highlight);
+}
+@keyframes marquee { from{background-position:0 0} to{background-position:40px 0} }
 
 /* ── Loading overlay ── */
-.loading-overlay { position:fixed; inset:0; background:rgba(247,248,252,.9); backdrop-filter:blur(4px); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:999; gap:16px; }
-.loading-text { font-family:'Syne',sans-serif; font-size:18px; font-weight:700; color:var(--ink); }
-.loading-sub { font-size:14px; color:var(--muted); }
+.loading-overlay {
+  position:fixed; inset:0; background:var(--win-gray);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; gap:12px;
+}
+.loading-text { font-size:13px; font-weight:bold; color:#000; }
+.loading-sub { font-size:11px; color:#000; }
+
+/* ── Win2k Desktop wallpaper area ── */
+.win-desktop-bg { background: var(--win-desktop); padding: 4px; }
+
+/* ── Scrollbar win2k style ── */
+::-webkit-scrollbar { width: 16px; height: 16px; }
+::-webkit-scrollbar-track { background: var(--win-gray); }
+::-webkit-scrollbar-thumb {
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
+}
+::-webkit-scrollbar-button {
+  background: var(--win-gray);
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-shadow);
+  height: 16px; width: 16px;
+}
 
 /* ── Responsive ── */
 @media(max-width:768px){
   .hero-grid,.grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
-  .hero-h1{font-size:38px;}
   .nav-links{display:none;}
-  .hero{padding:64px 0;}
 }
 `;
 
@@ -315,7 +515,7 @@ const IC = {
   eye: "👁", edit: "✏️", trash: "🗑", plus: "+", ai: "🤖",
 };
 
-// ── Mock Analysis Data ──────────────────────────────────────────────────────
+// ── Mock Analysis Data ─────────��────────────────────────────────────────────
 const mockAnalysis = {
   atsScore: 72,
   matchScore: 68,
@@ -350,17 +550,17 @@ const mockAnalysis = {
 };
 
 // ── Helper: Score circle ────────────────────────────────────────────────────
-function ScoreCircle({ score, size = 140, color = "#00c2a8", label = "ATS Score" }) {
+function ScoreCircle({ score, size = 120, color = "#000080", label = "ATS Score" }) {
   const r = size / 2 - 10;
   const circ = 2 * Math.PI * r;
   const dash = (score / 100) * circ;
   return (
     <div className="score-circle" style={{ width: size, height: size }}>
       <svg className="score-ring" width={size} height={size}>
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--line)" strokeWidth={8} />
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={8}
-          strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
-          style={{ transition: "stroke-dasharray 1s cubic-bezier(.16,1,.3,1)" }} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#808080" strokeWidth={6} />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke={color} strokeWidth={6}
+          strokeDasharray={`${dash} ${circ}`} strokeLinecap="butt"
+          style={{ transition: "stroke-dasharray 0.8s linear" }} />
       </svg>
       <div className="score-val" style={{ color }}>{score}</div>
       <div className="score-lbl">{label}</div>
@@ -369,12 +569,12 @@ function ScoreCircle({ score, size = 140, color = "#00c2a8", label = "ATS Score"
 }
 
 // ── Helper: Progress bar ────────────────────────────────────────────────────
-function ProgressBar({ label, value, max = 100, color = "var(--teal)" }) {
+function ProgressBar({ label, value, max = 100, color = "var(--win-blue)" }) {
   return (
     <div className="pbar-wrap">
       <div className="pbar-head">
         <span style={{ fontWeight: 600, fontSize: 13 }}>{label}</span>
-        <span style={{ color: "var(--muted)", fontSize: 13 }}>{value}%</span>
+        <span style={{ color: "#000", fontSize: 13 }}>{value}%</span>
       </div>
       <div className="pbar-track">
         <div className="pbar-fill" style={{ width: `${value}%`, background: color }} />
@@ -384,7 +584,7 @@ function ProgressBar({ label, value, max = 100, color = "var(--teal)" }) {
 }
 
 // ── Loading Screen ──────────────────────────────────────────────────────────
-function LoadingScreen({ text = "Analyzing your CV…", sub = "Our AI is scanning for ATS compatibility" }) {
+function LoadingScreen({ text = "Analyzing your CV…", sub = "Please wait while ATSPro processes your document" }) {
   const [step, setStep] = useState(0);
   const steps = ["Parsing document structure…", "Extracting keywords…", "Comparing with job description…", "Generating improvements…"];
   useEffect(() => {
@@ -393,9 +593,24 @@ function LoadingScreen({ text = "Analyzing your CV…", sub = "Our AI is scannin
   }, []);
   return (
     <div className="loading-overlay">
-      <div className="spinner" />
-      <div className="loading-text">{text}</div>
-      <div className="loading-sub">{steps[step]}</div>
+      {/* Win2K dialog box */}
+      <div style={{ background: "var(--win-gray)", border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", width: 360, boxShadow: "2px 2px 4px rgba(0,0,0,.5)" }}>
+        <div className="win-title-bar">
+          <span><span className="win-title-icon">⏳</span> ATSPro — Processing</span>
+          <div className="win-title-buttons">
+            <div className="win-title-btn">_</div>
+          </div>
+        </div>
+        <div style={{ padding: 20, textAlign: "center" }}>
+          <div style={{ fontSize: 28, marginBottom: 12 }}>⏳</div>
+          <div className="loading-text">{text}</div>
+          <div style={{ margin: "12px 0" }}>
+            <div className="spinner" />
+          </div>
+          <div className="loading-sub">{steps[step]}</div>
+          <div style={{ marginTop: 12, fontSize: 11, color: "var(--win-dark-gray)" }}>Please do not close this window.</div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -411,42 +626,121 @@ function HomePage({ nav }) {
     { icon: "⚡", title: "Instant Suggestions", desc: "Receive AI-powered rewrite suggestions to immediately boost your score." },
   ];
   const testimonials = [
-    { quote: "My application rate went from 5% to 28% after optimizing with ATSPro. The keyword tool is incredible.", name: "Sarah Chen", role: "Software Engineer", color: "#6366f1" },
-    { quote: "I was getting rejected by systems before humans even saw my CV. ATSPro fixed that completely.", name: "Marcus Johnson", role: "Marketing Manager", color: "#f59e0b" },
-    { quote: "The CV builder with ATS templates saved me hours and landed me 3 interviews in one week.", name: "Priya Sharma", role: "Data Analyst", color: "#10b981" },
+    { quote: "My application rate went from 5% to 28% after optimizing with ATSPro. The keyword tool is incredible.", name: "Sarah Chen", role: "Software Engineer", color: "#000080" },
+    { quote: "I was getting rejected by systems before humans even saw my CV. ATSPro fixed that completely.", name: "Marcus Johnson", role: "Marketing Manager", color: "#806000" },
+    { quote: "The CV builder with ATS templates saved me hours and landed me 3 interviews in one week.", name: "Priya Sharma", role: "Data Analyst", color: "#008000" },
   ];
   return (
     <>
-      {/* Hero */}
+      {/* Hero — Win2k welcome window */}
       <section className="hero">
         <div className="container">
-          <div className="hero-grid">
-            <div className="fade-up">
-              <div className="hero-eyebrow">AI-Powered CV Optimization</div>
-              <h1 className="hero-h1">Optimize Your CV for ATS Systems</h1>
-              <p className="hero-sub">75% of resumes are rejected before a human ever reads them. Our AI ensures yours makes it through — every time.</p>
-              <div className="hero-actions">
-                <button className="btn btn-primary btn-lg" onClick={() => nav("upload")}>Start Now {IC.arrow}</button>
-                <button className="btn btn-secondary btn-lg" onClick={() => nav("upload")} style={{ background: "rgba(255,255,255,.08)", color: "#fff", borderColor: "rgba(255,255,255,.2)" }}>Try Free Scan</button>
+          {/* Title bar for hero */}
+          <div style={{ background: "var(--win-gray)", border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", marginBottom: 8 }}>
+            <div className="win-title-bar">
+              <span><span className="win-title-icon">📊</span> ATSPro — AI-Powered CV Optimizer v2.0</span>
+              <div className="win-title-buttons">
+                <div className="win-title-btn">_</div>
+                <div className="win-title-btn">□</div>
+                <div className="win-title-btn close">✕</div>
               </div>
             </div>
-            <div className="hero-visual fade-up" style={{ animationDelay: ".15s" }}>
-              <div style={{ color: "rgba(255,255,255,.5)", fontSize: 12, marginBottom: 16, textTransform: "uppercase", letterSpacing: ".08em", fontWeight: 600 }}>Live ATS Analysis Preview</div>
-              <div className="hero-score-row">
-                <div className="hero-metric"><div className="hero-metric-val">72</div><div className="hero-metric-lbl">ATS Score</div></div>
-                <div className="hero-metric"><div className="hero-metric-val">68%</div><div className="hero-metric-lbl">Keyword Match</div></div>
-                <div className="hero-metric"><div className="hero-metric-val">14</div><div className="hero-metric-lbl">Missing Keys</div></div>
-              </div>
-              {[["Keyword Coverage", 68], ["Formatting", 80], ["Section Structure", 74], ["Readability", 88]].map(([l, v]) => (
-                <div className="hero-bar-row" key={l}>
-                  <div className="hero-bar-lbl"><span>{l}</span><span>{v}%</span></div>
-                  <div className="hero-bar-track"><div className="hero-bar-fill" style={{ width: `${v}%` }} /></div>
+            <div style={{ padding: 12 }}>
+              <div className="hero-grid">
+                <div className="fade-up">
+                  <div className="hero-eyebrow">AI-Powered CV Optimization</div>
+                  <h1 className="hero-h1">Optimize Your CV<br />for ATS Systems</h1>
+                  <p className="hero-sub">75% of resumes are rejected before a human ever reads them. Our AI ensures yours makes it through — every time.</p>
+                  <div className="hero-actions">
+                    <button className="btn btn-primary btn-lg" onClick={() => nav("upload")}>Start Now {IC.arrow}</button>
+                    <button className="btn btn-secondary btn-lg" onClick={() => nav("upload")}>Try Free Scan</button>
+                  </div>
                 </div>
-              ))}
-              <div style={{ marginTop: 20, padding: "12px 16px", background: "rgba(0,194,168,.12)", borderRadius: 10, border: "1px solid rgba(0,194,168,.25)" }}>
-                <div style={{ fontSize: 12, color: "var(--teal)", fontWeight: 700, marginBottom: 6 }}>⚡ Top Improvements</div>
-                {["Add Agile/Scrum keywords", "Rewrite professional summary", "Add certifications section"].map(s => (
-                  <div key={s} style={{ fontSize: 12, color: "rgba(255,255,255,.6)", marginBottom: 3 }}>→ {s}</div>
+                <div className="hero-visual fade-up" style={{ animationDelay: ".1s" }}>
+                  {/* Inner window: Live Preview */}
+                  <div style={{ border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", marginBottom: 6 }}>
+                    <div className="win-title-bar" style={{ fontSize: 10 }}>
+                      <span>📈 Live ATS Analysis Preview</span>
+                    </div>
+                    <div style={{ background: "var(--win-gray)", padding: 10 }}>
+                      <div className="hero-score-row">
+                        <div className="hero-metric"><div className="hero-metric-val">72</div><div className="hero-metric-lbl">ATS Score</div></div>
+                        <div className="hero-metric"><div className="hero-metric-val">68%</div><div className="hero-metric-lbl">Keyword Match</div></div>
+                        <div className="hero-metric"><div className="hero-metric-val">14</div><div className="hero-metric-lbl">Missing Keys</div></div>
+                      </div>
+                      {[["Keyword Coverage", 68], ["Formatting", 80], ["Section Structure", 74], ["Readability", 88]].map(([l, v]) => (
+                        <div className="hero-bar-row" key={l}>
+                          <div className="hero-bar-lbl"><span>{l}</span><span>{v}%</span></div>
+                          <div className="hero-bar-track"><div className="hero-bar-fill" style={{ width: `${v}%` }} /></div>
+                        </div>
+                      ))}
+                      <div style={{ marginTop: 10, padding: "6px 8px", background: "#ffffc0", border: "1px solid #808000" }}>
+                        <div style={{ fontSize: 10, fontWeight: "bold", marginBottom: 4 }}>⚡ Top Improvements</div>
+                        {["Add Agile/Scrum keywords", "Rewrite professional summary", "Add certifications section"].map(s => (
+                          <div key={s} style={{ fontSize: 10, marginBottom: 2 }}>→ {s}</div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats — Win2k status bar style */}
+      <section style={{ background: "var(--win-gray)", borderTop: "1px solid var(--win-shadow)", borderBottom: "1px solid var(--win-highlight)", padding: "6px 0" }}>
+        <div className="container">
+          <div className="grid-4">
+            {[["50K+", "CVs Analyzed"], ["87%", "Interview Rate"], ["3x", "More Callbacks"], ["4.9★", "User Rating"]].map(([v, l]) => (
+              <div key={l} style={{ display: "flex", alignItems: "center", gap: 6, padding: "4px 8px", borderRight: "1px solid var(--win-shadow)" }}>
+                <div style={{ fontSize: 16, fontWeight: "bold", color: "var(--win-blue)" }}>{v}</div>
+                <div style={{ fontSize: 11, color: "#000" }}>{l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How it works — grouped list box style */}
+      <section className="section" style={{ background: "var(--win-gray)" }}>
+        <div className="container">
+          <div style={{ border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", marginBottom: 8 }}>
+            <div className="win-title-bar">
+              <span>📋 How It Works — 3 Easy Steps</span>
+            </div>
+            <div style={{ padding: 12 }}>
+              <div className="grid-3">
+                {[
+                  { n: "1", title: "Upload Your CV", desc: "Upload your CV in PDF or DOCX format. We support all standard formats.", icon: "📄" },
+                  { n: "2", title: "Add Job Description", desc: "Paste the job description you're targeting for precise keyword matching.", icon: "💼" },
+                  { n: "3", title: "Get Analysis & Improvements", desc: "Receive a detailed ATS score, missing keywords, and AI-powered rewrites.", icon: "✨" },
+                ].map(s => (
+                  <div className="card" key={s.n} style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 24, marginBottom: 8 }}>{s.icon}</div>
+                    <div className="step-num" style={{ margin: "0 auto 8px" }}>{s.n}</div>
+                    <h3 style={{ fontSize: 12, marginBottom: 4, fontWeight: "bold" }}>{s.title}</h3>
+                    <p style={{ fontSize: 11 }}>{s.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Features window */}
+          <div style={{ border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)" }}>
+            <div className="win-title-bar">
+              <span>⚡ Features — Everything You Need to Beat ATS</span>
+            </div>
+            <div style={{ padding: 12 }}>
+              <div className="grid-4">
+                {features.map(f => (
+                  <div className="card" key={f.title}>
+                    <div className="feat-icon">{f.icon}</div>
+                    <h3 style={{ fontSize: 12, marginBottom: 4, fontWeight: "bold" }}>{f.title}</h3>
+                    <p style={{ fontSize: 11, lineHeight: 1.5 }}>{f.desc}</p>
+                  </div>
                 ))}
               </div>
             </div>
@@ -454,91 +748,48 @@ function HomePage({ nav }) {
         </div>
       </section>
 
-      {/* Stats */}
-      <section style={{ background: "var(--white)", borderBottom: "1px solid var(--line)", padding: "32px 0" }}>
-        <div className="container">
-          <div className="grid-4">
-            {[["50K+", "CVs Analyzed"], ["87%", "Interview Rate"], ["3x", "More Callbacks"], ["4.9★", "User Rating"]].map(([v, l]) => (
-              <div className="stat-card card-sm" key={l} style={{ border: "none", padding: "0 20px", borderRight: "1px solid var(--line)" }}>
-                <div className="stat-num">{v}</div><div className="stat-desc">{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it works */}
-      <section className="section" style={{ background: "var(--bg)" }}>
-        <div className="container">
-          <div style={{ textAlign: "center", marginBottom: 56 }}>
-            <div className="badge badge-teal" style={{ marginBottom: 12 }}>How It Works</div>
-            <h2 className="section-title">Three steps to a better CV</h2>
-          </div>
-          <div className="grid-3">
-            {[
-              { n: "1", title: "Upload Your CV", desc: "Upload your CV in PDF or DOCX format. We support all standard formats.", icon: "📄" },
-              { n: "2", title: "Add Job Description", desc: "Paste the job description you're targeting for precise keyword matching.", icon: "💼" },
-              { n: "3", title: "Get Analysis & Improvements", desc: "Receive a detailed ATS score, missing keywords, and AI-powered rewrites.", icon: "✨" },
-            ].map(s => (
-              <div className="card" key={s.n} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 36, marginBottom: 14 }}>{s.icon}</div>
-                <div className="step-num" style={{ margin: "0 auto 14px" }}>{s.n}</div>
-                <h3 style={{ fontSize: 18, marginBottom: 8 }}>{s.title}</h3>
-                <p style={{ color: "var(--muted)", fontSize: 14 }}>{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="section" style={{ background: "var(--white)" }}>
-        <div className="container">
-          <div className="badge badge-teal" style={{ marginBottom: 12 }}>Features</div>
-          <h2 className="section-title">Everything you need to beat ATS</h2>
-          <p className="section-sub">Our comprehensive toolkit covers every aspect of ATS optimization.</p>
-          <div className="grid-4">
-            {features.map(f => (
-              <div className="card" key={f.title}>
-                <div className="feat-icon">{f.icon}</div>
-                <h3 style={{ fontSize: 17, marginBottom: 8 }}>{f.title}</h3>
-                <p style={{ color: "var(--muted)", fontSize: 14, lineHeight: 1.6 }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Testimonials */}
-      <section className="section" style={{ background: "var(--bg)" }}>
+      <section className="section" style={{ background: "var(--win-gray)" }}>
         <div className="container">
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div className="badge badge-teal" style={{ marginBottom: 12 }}>Testimonials</div>
-            <h2 className="section-title">Real results from real users</h2>
-          </div>
-          <div className="grid-3">
-            {testimonials.map(t => (
-              <div className="card testimonial" key={t.name}>
-                <div className="testi-quote">"</div>
-                <p style={{ color: "var(--slate)", lineHeight: 1.7, fontSize: 15 }}>{t.quote}</p>
-                <div className="testi-author">
-                  <div className="testi-avatar" style={{ background: t.color }}>{t.name[0]}</div>
-                  <div><div style={{ fontWeight: 700, fontSize: 14 }}>{t.name}</div><div style={{ color: "var(--muted)", fontSize: 13 }}>{t.role}</div></div>
-                </div>
+          <div style={{ border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)" }}>
+            <div className="win-title-bar">
+              <span>💬 User Testimonials — Real Results</span>
+            </div>
+            <div style={{ padding: 12 }}>
+              <div className="grid-3">
+                {testimonials.map(t => (
+                  <div className="card testimonial" key={t.name}>
+                    <div className="testi-quote">"</div>
+                    <p style={{ fontSize: 11, lineHeight: 1.6 }}>{t.quote}</p>
+                    <div className="testi-author">
+                      <div className="testi-avatar">{t.name[0]}</div>
+                      <div><div style={{ fontWeight: "bold", fontSize: 11 }}>{t.name}</div><div style={{ fontSize: 10 }}>{t.role}</div></div>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="section" style={{ background: "var(--ink)", textAlign: "center" }}>
+      <section className="section" style={{ background: "var(--win-gray)" }}>
         <div className="container-sm">
-          <h2 style={{ fontSize: 40, color: "#fff", marginBottom: 16 }}>Ready to land more interviews?</h2>
-          <p style={{ color: "rgba(255,255,255,.6)", fontSize: 16, marginBottom: 36 }}>Join 50,000+ professionals who optimized their CVs with ATSPro.</p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <button className="btn btn-primary btn-lg" onClick={() => nav("upload")}>Start Free Today {IC.arrow}</button>
-            <button className="btn btn-lg" onClick={() => nav("pricing")} style={{ background: "rgba(255,255,255,.1)", color: "#fff", border: "1px solid rgba(255,255,255,.2)" }}>View Pricing</button>
+          <div style={{ border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)" }}>
+            <div className="win-title-bar">
+              <span>🎯 Get Started — Join 50,000+ Professionals</span>
+            </div>
+            <div style={{ padding: 20, textAlign: "center" }}>
+              <div style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 14, fontWeight: "bold", marginBottom: 6 }}>Ready to land more interviews?</div>
+                <p style={{ fontSize: 11 }}>Join 50,000+ professionals who optimized their CVs with ATSPro.</p>
+              </div>
+              <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+                <button className="btn btn-primary btn-lg" onClick={() => nav("upload")}>Start Free Today {IC.arrow}</button>
+                <button className="btn btn-secondary btn-lg" onClick={() => nav("pricing")}>View Pricing</button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -673,13 +924,13 @@ function UploadPage({ nav }) {
               <>
                 <div className="upload-icon">✅</div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>{file.name}</div>
-                <div style={{ color: "var(--muted)", fontSize: 13 }}>{(file.size / 1024).toFixed(0)} KB · Click to change</div>
+                <div style={{ color: "#000", fontSize: 13 }}>{(file.size / 1024).toFixed(0)} KB · Click to change</div>
               </>
             ) : (
               <>
                 <div className="upload-icon">📄</div>
                 <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 6 }}>Drop your CV here</div>
-                <div style={{ color: "var(--muted)", fontSize: 14, marginBottom: 12 }}>Supports PDF, DOCX — Max 10 MB</div>
+                <div style={{ color: "#000", fontSize: 14, marginBottom: 12 }}>Supports PDF, DOCX — Max 10 MB</div>
                 <button className="btn btn-secondary btn-sm">Browse Files</button>
               </>
             )}
@@ -689,7 +940,7 @@ function UploadPage({ nav }) {
         {/* Settings */}
         <div className="card">
           <h3 style={{ fontSize: 18, marginBottom: 4 }}>Analysis Settings</h3>
-          <p style={{ color: "var(--muted)", fontSize: 13, marginBottom: 24 }}>The more specific your role, the more accurate your keyword analysis.</p>
+          <p style={{ color: "#000", fontSize: 13, marginBottom: 24 }}>The more specific your role, the more accurate your keyword analysis.</p>
 
           {/* Row 1: Language + Experience */}
           <div className="grid-2" style={{ marginBottom: 4 }}>
@@ -730,13 +981,13 @@ function UploadPage({ nav }) {
                   key={cat.id}
                   onClick={() => { setCategory(cat.id); setRole(""); }}
                   style={{
-                    padding: "10px 6px", borderRadius: 10, border: `2px solid ${category === cat.id ? "var(--teal)" : "var(--line)"}`,
-                    background: category === cat.id ? "rgba(0,194,168,.07)" : "var(--bg)",
+                    padding: "10px 6px", borderRadius: 10, border: `2px solid ${category === cat.id ? "var(--win-blue)" : "var(--win-dark-gray)"}`,
+                    background: category === cat.id ? "rgba(0,0,128,0.07)" : "var(--win-gray)",
                     cursor: "pointer", textAlign: "center", transition: "all .15s",
                   }}
                 >
                   <div style={{ fontSize: 20, marginBottom: 4 }}>{cat.icon}</div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: category === cat.id ? "var(--teal)" : "var(--slate)", lineHeight: 1.3 }}>{cat.label}</div>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: category === cat.id ? "var(--win-blue)" : "#444", lineHeight: 1.3 }}>{cat.label}</div>
                 </div>
               ))}
             </div>
@@ -745,7 +996,7 @@ function UploadPage({ nav }) {
           {/* Specific Role — shown only after category picked */}
           {selectedCat && (
             <div className="field" style={{ animation: "fadeUp .25s ease both" }}>
-              <label>Specific Role <span style={{ color: "var(--teal)", fontSize: 11 }}>— {selectedCat.label}</span></label>
+              <label>Specific Role <span style={{ color: "var(--win-blue)", fontSize: 11 }}>— {selectedCat.label}</span></label>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 7, marginTop: 4 }}>
                 {selectedCat.roles.map(r => (
                   <div
@@ -763,11 +1014,11 @@ function UploadPage({ nav }) {
 
           {/* Selected summary pill */}
           {role && (
-            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "rgba(0,194,168,.06)", border: "1px solid rgba(0,194,168,.2)", borderRadius: 10, marginBottom: 20, fontSize: 13 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "10px 14px", background: "rgba(0,0,128,0.06)", border: "1px solid rgba(0,0,128,0.2)", borderRadius: 10, marginBottom: 20, fontSize: 13 }}>
               <span style={{ fontSize: 18 }}>{selectedCat?.icon}</span>
-              <span style={{ fontWeight: 600, color: "var(--teal)" }}>{role}</span>
-              {expLevel && <><span style={{ color: "var(--muted)" }}>·</span><span style={{ color: "var(--muted)" }}>{expLevel}</span></>}
-              <button onClick={() => { setRole(""); setCategory(""); setExpLevel(""); }} style={{ marginLeft: "auto", background: "none", border: "none", color: "var(--muted)", cursor: "pointer", fontSize: 16 }}>✕</button>
+              <span style={{ fontWeight: 600, color: "var(--win-blue)" }}>{role}</span>
+              {expLevel && <><span style={{ color: "#000" }}>·</span><span style={{ color: "#000" }}>{expLevel}</span></>}
+              <button onClick={() => { setRole(""); setCategory(""); setExpLevel(""); }} style={{ marginLeft: "auto", background: "none", border: "none", color: "#000", cursor: "pointer", fontSize: 16 }}>✕</button>
             </div>
           )}
 
@@ -964,9 +1215,9 @@ function JobDescPage({ nav }) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14, flexWrap: "wrap", gap: 8 }}>
             <div>
               <h3 style={{ marginBottom: 2 }}>Quick Start Templates</h3>
-              <p style={{ color: "var(--muted)", fontSize: 13 }}>Select a role template to pre-fill the job description with specialist requirements.</p>
+              <p style={{ color: "#000", fontSize: 13 }}>Select a role template to pre-fill the job description with specialist requirements.</p>
             </div>
-            <span className="badge badge-teal">8 Tech Roles</span>
+            <span className="badge badge-blue">8 Tech Roles</span>
           </div>
 
           {/* Category filter pills */}
@@ -977,9 +1228,9 @@ function JobDescPage({ nav }) {
                 onClick={() => setFilterCat(c.id)}
                 className="btn btn-sm"
                 style={{
-                  background: filterCat === c.id ? "var(--teal)" : "var(--bg)",
-                  color: filterCat === c.id ? "#fff" : "var(--slate)",
-                  border: `1.5px solid ${filterCat === c.id ? "var(--teal)" : "var(--line)"}`,
+                  background: filterCat === c.id ? "var(--win-blue)" : "var(--win-gray)",
+                  color: filterCat === c.id ? "#fff" : "#444",
+                  border: `1.5px solid ${filterCat === c.id ? "var(--win-blue)" : "var(--win-dark-gray)"}`,
                   borderRadius: 20, fontWeight: 600,
                 }}
               >{c.label}</button>
@@ -994,12 +1245,12 @@ function JobDescPage({ nav }) {
                 onClick={() => applyTemplate(tpl)}
                 style={{
                   padding: "14px 16px", borderRadius: 12, cursor: "pointer", transition: "all .15s",
-                  border: `2px solid ${activeTemplate === tpl.id ? "var(--teal)" : "var(--line)"}`,
-                  background: activeTemplate === tpl.id ? "rgba(0,194,168,.06)" : "var(--bg)",
+                  border: `2px solid ${activeTemplate === tpl.id ? "var(--win-blue)" : "var(--win-dark-gray)"}`,
+                  background: activeTemplate === tpl.id ? "rgba(0,0,128,0.06)" : "var(--win-gray)",
                 }}
               >
                 <div style={{ fontSize: 22, marginBottom: 6 }}>{tpl.icon}</div>
-                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6, color: activeTemplate === tpl.id ? "var(--teal)" : "var(--ink)" }}>{tpl.label}</div>
+                <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6, color: activeTemplate === tpl.id ? "var(--win-blue)" : "#000" }}>{tpl.label}</div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
                   {tpl.stack.slice(0, 3).map(s => (
                     <span key={s} className="badge badge-gray" style={{ fontSize: 10 }}>{s}</span>
@@ -1018,18 +1269,18 @@ function JobDescPage({ nav }) {
               <div className="field" style={{ marginBottom: 0 }}>
                 <label style={{ display: "flex", justifyContent: "space-between" }}>
                   Job Description Text
-                  {text && <span style={{ color: "var(--muted)", fontWeight: 400 }}>{text.split(/\s+/).filter(Boolean).length} words</span>}
+                  {text && <span style={{ color: "#000", fontWeight: 400 }}>{text.split(/\s+/).filter(Boolean).length} words</span>}
                 </label>
                 <textarea
                   value={text}
                   onChange={e => { setText(e.target.value); setActiveTemplate(null); }}
                   placeholder={"Paste the full job description here, or select a template above…"}
-                  style={{ minHeight: 320, marginTop: 6, fontFamily: "'DM Sans', sans-serif" }}
+                  style={{ minHeight: 320, marginTop: 6, fontFamily: "'MS Sans Serif', inherit" }}
                 />
               </div>
             </div>
 
-            <div style={{ textAlign: "center", color: "var(--muted)", fontSize: 13, margin: "4px 0 12px" }}>— OR upload a file —</div>
+            <div style={{ textAlign: "center", color: "#000", fontSize: 13, margin: "4px 0 12px" }}>— OR upload a file —</div>
             <div className="upload-zone" style={{ padding: "20px" }} onClick={() => {}}>
               <div style={{ fontSize: 22, marginBottom: 6 }}>📎</div>
               <div style={{ fontWeight: 600, fontSize: 14 }}>Upload JD File (PDF / DOCX)</div>
@@ -1046,15 +1297,15 @@ function JobDescPage({ nav }) {
                     <span style={{ fontSize: 24 }}>{tpl.icon}</span>
                     <div>
                       <div style={{ fontWeight: 700, fontSize: 15 }}>{tpl.label}</div>
-                      <div style={{ color: "var(--muted)", fontSize: 12 }}>Template loaded</div>
+                      <div style={{ color: "#000", fontSize: 12 }}>Template loaded</div>
                     </div>
-                    <span className="badge badge-teal" style={{ marginLeft: "auto" }}>Active</span>
+                    <span className="badge badge-blue" style={{ marginLeft: "auto" }}>Active</span>
                   </div>
-                  <div style={{ marginBottom: 10, fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".06em" }}>Key Tech Stack</div>
+                  <div style={{ marginBottom: 10, fontSize: 12, fontWeight: 700, color: "#000", textTransform: "uppercase", letterSpacing: ".06em" }}>Key Tech Stack</div>
                   <div className="tag-wrap" style={{ marginBottom: 14 }}>
                     {tpl.stack.map(s => <span key={s} className="tag tag-blue">{s}</span>)}
                   </div>
-                  <div style={{ fontSize: 12, color: "var(--muted)", padding: "10px 12px", background: "var(--bg)", borderRadius: 8 }}>
+                  <div style={{ fontSize: 12, color: "#000", padding: "10px 12px", background: "var(--win-gray)", borderRadius: 8 }}>
                     🎯 Our AI will extract additional keywords from the full description and match them against your CV.
                   </div>
                 </div>
@@ -1068,10 +1319,10 @@ function JobDescPage({ nav }) {
               </div>
 
               <div style={{ marginBottom: 16 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 8 }}>Analysis will include</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#000", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 8 }}>Analysis will include</div>
                 {["Role-specific keyword bank", "ATS scoring rubric for this role", "Tailored bullet point rewrites", "Stack-specific skill gap analysis"].map(f => (
                   <div key={f} style={{ display: "flex", gap: 8, fontSize: 13, marginBottom: 6 }}>
-                    <span style={{ color: "var(--teal)", fontWeight: 700 }}>✓</span>{f}
+                    <span style={{ color: "var(--win-blue)", fontWeight: 700 }}>✓</span>{f}
                   </div>
                 ))}
               </div>
@@ -1116,7 +1367,7 @@ function ResultsPage({ nav }) {
         {/* Scores */}
         <div className="grid-3" style={{ marginBottom: 32 }}>
           <div className="card" style={{ textAlign: "center", padding: "32px 20px" }}>
-            <ScoreCircle score={d.atsScore} color="#00c2a8" label="ATS Score" />
+            <ScoreCircle score={d.atsScore} color="#000080" label="ATS Score" />
             <div style={{ marginTop: 16 }}>
               <span className="badge badge-amber">Needs Work</span>
             </div>
@@ -1131,7 +1382,7 @@ function ResultsPage({ nav }) {
             <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Quick Stats</div>
             {[["Matched Keywords", "7 / 14", "#10b981"], ["Missing Keywords", "7 critical", "#ef4444"], ["Formatting Issues", "0 found", "#10b981"], ["Section Coverage", "4 / 6", "#f59e0b"]].map(([l, v, c]) => (
               <div key={l} style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, fontSize: 14 }}>
-                <span style={{ color: "var(--muted)" }}>{l}</span>
+                <span style={{ color: "#000" }}>{l}</span>
                 <span style={{ fontWeight: 700, color: c }}>{v}</span>
               </div>
             ))}
@@ -1148,18 +1399,18 @@ function ResultsPage({ nav }) {
           <div className="grid-2">
             <div className="card">
               <h3 style={{ marginBottom: 16, display: "flex", gap: 8 }}><span>✅</span> Strengths</h3>
-              {d.strengths.map(s => <div key={s} style={{ display: "flex", gap: 10, marginBottom: 10, fontSize: 14 }}><span style={{ color: "var(--green)", fontWeight: 700 }}>✓</span>{s}</div>)}
+              {d.strengths.map(s => <div key={s} style={{ display: "flex", gap: 10, marginBottom: 10, fontSize: 14 }}><span style={{ color: "#008000", fontWeight: 700 }}>✓</span>{s}</div>)}
             </div>
             <div className="card">
               <h3 style={{ marginBottom: 16, display: "flex", gap: 8 }}><span>⚠️</span> Weaknesses</h3>
-              {d.weaknesses.map(s => <div key={s} style={{ display: "flex", gap: 10, marginBottom: 10, fontSize: 14 }}><span style={{ color: "var(--red)", fontWeight: 700 }}>✗</span>{s}</div>)}
+              {d.weaknesses.map(s => <div key={s} style={{ display: "flex", gap: 10, marginBottom: 10, fontSize: 14 }}><span style={{ color: "#cc0000", fontWeight: 700 }}>✗</span>{s}</div>)}
             </div>
             <div className="card" style={{ gridColumn: "1/-1" }}>
               <h3 style={{ marginBottom: 16 }}>⚡ Key Improvements</h3>
               <div className="grid-2">
                 {d.improvements.map((s, i) => (
-                  <div key={s} style={{ display: "flex", gap: 12, padding: "12px 14px", background: "var(--bg)", borderRadius: 10, fontSize: 14 }}>
-                    <div style={{ width: 24, height: 24, borderRadius: 6, background: "var(--teal)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
+                  <div key={s} style={{ display: "flex", gap: 12, padding: "12px 14px", background: "var(--win-gray)", borderRadius: 10, fontSize: 14 }}>
+                    <div style={{ width: 24, height: 24, borderRadius: 6, background: "var(--win-blue)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>{i + 1}</div>
                     {s}
                   </div>
                 ))}
@@ -1181,8 +1432,8 @@ function ResultsPage({ nav }) {
             <div className="card">
               <h3 style={{ marginBottom: 16 }}>Formatting Checks</h3>
               {d.formatting.issues.map(i => (
-                <div key={i} style={{ display: "flex", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--line)", fontSize: 14 }}>
-                  <span style={{ color: "var(--green)" }}>✓</span>{i}
+                <div key={i} style={{ display: "flex", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--win-dark-gray)", fontSize: 14 }}>
+                  <span style={{ color: "#008000" }}>✓</span>{i}
                 </div>
               ))}
             </div>
@@ -1195,22 +1446,22 @@ function ResultsPage({ nav }) {
             <div className="grid-3" style={{ marginBottom: 24 }}>
               {[["Matched", d.keywords.matched.length, "green"], ["Missing", d.keywords.missing.length, "red"], ["Suggested", d.keywords.suggested.length, "blue"]].map(([l, v, c]) => (
                 <div className="card" key={l} style={{ textAlign: "center" }}>
-                  <div style={{ fontSize: 32, fontFamily: "'Syne',sans-serif", fontWeight: 800, color: `var(--${c})` }}>{v}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 13, marginTop: 4 }}>{l} Keywords</div>
+                  <div style={{ fontSize: 32, fontFamily: "inherit", fontWeight: 800, color: `var(--${c})` }}>{v}</div>
+                  <div style={{ color: "#000", fontSize: 13, marginTop: 4 }}>{l} Keywords</div>
                 </div>
               ))}
             </div>
             <div className="grid-3">
               <div className="card">
-                <h4 style={{ marginBottom: 14, color: "var(--green)" }}>✓ Matched Keywords</h4>
+                <h4 style={{ marginBottom: 14, color: "#008000" }}>✓ Matched Keywords</h4>
                 <div className="tag-wrap">{d.keywords.matched.map(k => <span className="tag tag-green" key={k}>{k}</span>)}</div>
               </div>
               <div className="card">
-                <h4 style={{ marginBottom: 14, color: "var(--red)" }}>✗ Missing Keywords</h4>
+                <h4 style={{ marginBottom: 14, color: "#cc0000" }}>✗ Missing Keywords</h4>
                 <div className="tag-wrap">{d.keywords.missing.map(k => <span className="tag tag-red" key={k}>{k}</span>)}</div>
               </div>
               <div className="card">
-                <h4 style={{ marginBottom: 14, color: "var(--blue)" }}>+ Suggested Keywords</h4>
+                <h4 style={{ marginBottom: 14, color: "#0000cc" }}>+ Suggested Keywords</h4>
                 <div className="tag-wrap">{d.keywords.suggested.map(k => <span className="tag tag-blue" key={k}>{k}</span>)}</div>
               </div>
             </div>
@@ -1223,11 +1474,11 @@ function ResultsPage({ nav }) {
             <h3 style={{ marginBottom: 24 }}>Section Analysis</h3>
             {Object.entries(d.sections).map(([s, v]) => (
               <ProgressBar key={s} label={s.charAt(0).toUpperCase() + s.slice(1)} value={v}
-                color={v >= 80 ? "var(--green)" : v >= 50 ? "var(--amber)" : "var(--red)"} />
+                color={v >= 80 ? "#008000" : v >= 50 ? "#806000" : "#cc0000"} />
             ))}
-            <div style={{ marginTop: 24, padding: 16, background: "var(--bg)", borderRadius: 10 }}>
+            <div style={{ marginTop: 24, padding: 16, background: "var(--win-gray)", borderRadius: 10 }}>
               <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 14 }}>💡 Recommendation</div>
-              <div style={{ fontSize: 14, color: "var(--muted)" }}>Add a Certifications section to increase your ATS score by approximately 8-12 points. Many ATS systems specifically scan for this section.</div>
+              <div style={{ fontSize: 14, color: "#000" }}>Add a Certifications section to increase your ATS score by approximately 8-12 points. Many ATS systems specifically scan for this section.</div>
             </div>
           </div>
         )}
@@ -1237,7 +1488,7 @@ function ResultsPage({ nav }) {
           <div className="grid-2">
             {d.problems.map(p => (
               <div className="card" key={p} style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(16,185,129,.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--green)", fontSize: 18 }}>✓</div>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(16,185,129,.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "#008000", fontSize: 18 }}>✓</div>
                 <span style={{ fontSize: 14 }}>{p}</span>
               </div>
             ))}
@@ -1477,78 +1728,82 @@ ATS ANALYSIS:
 
   const renderText = (text) => {
     return text.split("\n").map((line, i) => {
-      if (line.startsWith("**") && line.endsWith("**")) return <div key={i} style={{ fontWeight: 800, fontSize: 14, marginTop: 12, marginBottom: 4, color: "var(--ink)", fontFamily: "'Syne', sans-serif" }}>{line.slice(2, -2)}</div>;
-      if (line.startsWith("• ") || line.startsWith("- ")) return <div key={i} style={{ display: "flex", gap: 8, marginBottom: 3, fontSize: 14 }}><span style={{ color: "var(--teal)", flexShrink: 0, fontWeight: 700 }}>→</span><span>{line.slice(2)}</span></div>;
+      if (line.startsWith("**") && line.endsWith("**")) return <div key={i} style={{ fontWeight: 800, fontSize: 14, marginTop: 12, marginBottom: 4, color: "#000", fontFamily: "inherit" }}>{line.slice(2, -2)}</div>;
+      if (line.startsWith("• ") || line.startsWith("- ")) return <div key={i} style={{ display: "flex", gap: 8, marginBottom: 3, fontSize: 14 }}><span style={{ color: "var(--win-blue)", flexShrink: 0, fontWeight: 700 }}>→</span><span>{line.slice(2)}</span></div>;
       if (line.trim() === "") return <div key={i} style={{ height: 6 }} />;
       return <div key={i} style={{ fontSize: 14, lineHeight: 1.7 }}>{line}</div>;
     });
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: 580, background: "var(--white)", border: "1px solid var(--line)", borderRadius: 16, overflow: "hidden" }}>
-      {/* Header */}
-      <div style={{ padding: "14px 18px", background: "linear-gradient(135deg, #0a0f1e, #1c243a)", display: "flex", alignItems: "center", gap: 10 }}>
-        <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(0,194,168,.2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>🤖</div>
-        <div>
-          <div style={{ color: "#fff", fontWeight: 700, fontSize: 14, fontFamily: "'Syne', sans-serif" }}>AI CV Coach</div>
-          <div style={{ color: "var(--teal)", fontSize: 11, fontWeight: 600 }}>● Powered by Claude · Context-aware</div>
+    <div style={{ display: "flex", flexDirection: "column", height: 540, background: "var(--win-gray)", border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", overflow: "hidden" }}>
+      {/* Win2K title bar */}
+      <div className="win-title-bar">
+        <span><span className="win-title-icon">🤖</span> AI CV Coach — Powered by Claude</span>
+        <div className="win-title-buttons">
+          <span className="badge badge-blue" style={{ fontSize: 9 }}>CV</span>
+          <span className="badge badge-blue" style={{ fontSize: 9 }}>JD</span>
         </div>
-        <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
-          <span className="badge badge-teal" style={{ fontSize: 10 }}>CV Loaded</span>
-          <span className="badge badge-blue" style={{ fontSize: 10 }}>JD Loaded</span>
+      </div>
+      {/* Header */}
+      <div style={{ padding: "4px 8px", background: "var(--win-gray)", borderBottom: "1px solid var(--win-dark-gray)", display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ fontSize: 14 }}>🤖</div>
+        <div>
+          <div style={{ fontWeight: "bold", fontSize: 11 }}>AI CV Coach</div>
+          <div style={{ color: "var(--win-blue)", fontSize: 10 }}>● Powered by Claude · Context-aware analysis active</div>
         </div>
       </div>
 
       {/* Quick prompts */}
-      <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--line)", display: "flex", gap: 6, flexWrap: "wrap", background: "var(--bg)" }}>
+      <div style={{ padding: "10px 14px", borderBottom: "1px solid var(--win-dark-gray)", display: "flex", gap: 6, flexWrap: "wrap", background: "var(--win-gray)" }}>
         {quickPrompts.map(p => (
           <button key={p} onClick={() => sendFixed(p)} disabled={streaming}
-            style={{ fontSize: 11, padding: "4px 10px", borderRadius: 20, border: "1px solid var(--line)", background: "var(--white)", color: "var(--slate)", cursor: streaming ? "not-allowed" : "pointer", fontFamily: "'DM Sans', sans-serif", fontWeight: 500, whiteSpace: "nowrap", transition: "all .15s" }}
-            onMouseEnter={e => { if (!streaming) { e.target.style.borderColor = "var(--teal)"; e.target.style.color = "var(--teal)"; }}}
-            onMouseLeave={e => { e.target.style.borderColor = "var(--line)"; e.target.style.color = "var(--slate)"; }}
+            style={{ fontSize: 11, padding: "4px 10px", borderRadius: 20, border: "1px solid var(--win-dark-gray)", background: "var(--win-gray)", color: "#444", cursor: streaming ? "not-allowed" : "pointer", fontFamily: "'MS Sans Serif', inherit", fontWeight: 500, whiteSpace: "nowrap", transition: "all .15s" }}
+            onMouseEnter={e => { if (!streaming) { e.target.style.borderColor = "var(--win-blue)"; e.target.style.color = "var(--win-blue)"; }}}
+            onMouseLeave={e => { e.target.style.borderColor = "var(--win-dark-gray)"; e.target.style.color = "#444"; }}
           >{p}</button>
         ))}
       </div>
 
       {/* Messages */}
-      <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ flex: 1, overflowY: "auto", padding: "8px", display: "flex", flexDirection: "column", gap: 6, background: "#fff", borderTop: "2px solid var(--win-shadow)", borderLeft: "2px solid var(--win-shadow)", borderBottom: "2px solid var(--win-highlight)", borderRight: "2px solid var(--win-highlight)", margin: "4px 6px" }}>
         {messages.map((m, i) => (
-          <div key={i} style={{ display: "flex", gap: 10, justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
+          <div key={i} style={{ display: "flex", gap: 6, justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
             {m.role === "assistant" && (
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg, var(--teal), #00a890)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0, marginTop: 2 }}>🤖</div>
+              <div style={{ width: 22, height: 22, background: "var(--win-gray)", border: "1px solid var(--win-dark-gray)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, flexShrink: 0, marginTop: 1 }}>🤖</div>
             )}
             <div style={{
-              maxWidth: "82%", padding: "12px 16px", borderRadius: m.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-              background: m.role === "user" ? "linear-gradient(135deg, var(--teal), var(--teal2))" : "var(--bg)",
-              color: m.role === "user" ? "#fff" : "var(--ink)",
-              border: m.role === "assistant" ? "1px solid var(--line)" : "none",
-              fontSize: 14, lineHeight: 1.6,
+              maxWidth: "80%", padding: "4px 8px",
+              background: m.role === "user" ? "var(--win-blue)" : "var(--win-gray)",
+              color: m.role === "user" ? "#fff" : "#000",
+              border: "1px solid var(--win-dark-gray)",
+              fontSize: 11, lineHeight: 1.5,
             }}>
               {m.role === "assistant" ? renderText(m.text) : m.text}
             </div>
             {m.role === "user" && (
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--ink)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0, marginTop: 2 }}>👤</div>
+              <div style={{ width: 22, height: 22, background: "var(--win-gray)", border: "1px solid var(--win-dark-gray)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, flexShrink: 0, marginTop: 1 }}>👤</div>
             )}
           </div>
         ))}
 
         {/* Streaming message */}
         {streaming && streamText && (
-          <div style={{ display: "flex", gap: 10 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg, var(--teal), #00a890)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0, marginTop: 2 }}>🤖</div>
-            <div style={{ maxWidth: "82%", padding: "12px 16px", borderRadius: "16px 16px 16px 4px", background: "var(--bg)", border: "1px solid var(--teal)", fontSize: 14, lineHeight: 1.6 }}>
+          <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ width: 22, height: 22, background: "var(--win-gray)", border: "1px solid var(--win-dark-gray)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, flexShrink: 0 }}>🤖</div>
+            <div style={{ maxWidth: "80%", padding: "4px 8px", background: "var(--win-gray)", border: "1px solid var(--win-blue)", fontSize: 11, lineHeight: 1.5 }}>
               {renderText(streamText)}
-              <span style={{ display: "inline-block", width: 8, height: 14, background: "var(--teal)", marginLeft: 2, animation: "blink 0.7s step-end infinite", verticalAlign: "text-bottom" }} />
+              <span style={{ display: "inline-block", width: 6, height: 11, background: "var(--win-blue)", marginLeft: 2, animation: "blink 0.7s step-end infinite", verticalAlign: "text-bottom" }} />
             </div>
           </div>
         )}
 
         {/* Typing indicator */}
         {streaming && !streamText && (
-          <div style={{ display: "flex", gap: 10 }}>
-            <div style={{ width: 28, height: 28, borderRadius: 8, background: "linear-gradient(135deg, var(--teal), #00a890)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, flexShrink: 0 }}>🤖</div>
-            <div style={{ padding: "12px 16px", borderRadius: "16px 16px 16px 4px", background: "var(--bg)", border: "1px solid var(--line)", display: "flex", gap: 4, alignItems: "center" }}>
-              {[0, 1, 2].map(i => <div key={i} style={{ width: 6, height: 6, borderRadius: 3, background: "var(--teal)", animation: `bounce 1s ease ${i * 0.15}s infinite` }} />)}
+          <div style={{ display: "flex", gap: 6 }}>
+            <div style={{ width: 22, height: 22, background: "var(--win-gray)", border: "1px solid var(--win-dark-gray)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 12, flexShrink: 0 }}>🤖</div>
+            <div style={{ padding: "4px 8px", background: "var(--win-gray)", border: "1px solid var(--win-dark-gray)", display: "flex", gap: 3, alignItems: "center" }}>
+              {[0, 1, 2].map(i => <div key={i} style={{ width: 5, height: 5, background: "var(--win-blue)", animation: `bounce 1s ease ${i * 0.15}s infinite` }} />)}
             </div>
           </div>
         )}
@@ -1556,18 +1811,18 @@ ATS ANALYSIS:
       </div>
 
       {/* Input */}
-      <div style={{ padding: "12px 14px", borderTop: "1px solid var(--line)", display: "flex", gap: 10, background: "var(--white)" }}>
+      <div style={{ padding: "4px 6px", borderTop: "1px solid var(--win-dark-gray)", display: "flex", gap: 4, background: "var(--win-gray)" }}>
         <input
           value={input} onChange={e => setInput(e.target.value)}
           onKeyDown={e => e.key === "Enter" && !e.shiftKey && sendFixed(input)}
           placeholder="Ask the AI to rewrite a section, improve bullet points, add keywords…"
           disabled={streaming}
-          style={{ flex: 1, padding: "10px 14px", border: "1.5px solid var(--line)", borderRadius: 10, fontSize: 13, fontFamily: "'DM Sans', sans-serif", outline: "none", transition: "border-color .2s" }}
-          onFocus={e => e.target.style.borderColor = "var(--teal)"}
-          onBlur={e => e.target.style.borderColor = "var(--line)"}
+          style={{ flex: 1, padding: "10px 14px", border: "1.5px solid var(--win-dark-gray)", borderRadius: 10, fontSize: 13, fontFamily: "'MS Sans Serif', inherit", outline: "none", transition: "border-color .2s" }}
+          onFocus={e => e.target.style.borderColor = "var(--win-blue)"}
+          onBlur={e => e.target.style.borderColor = "var(--win-dark-gray)"}
         />
         <button onClick={() => sendFixed(input)} disabled={streaming || !input.trim()}
-          style={{ width: 40, height: 40, borderRadius: 10, background: input.trim() && !streaming ? "var(--teal)" : "var(--line)", border: "none", cursor: input.trim() && !streaming ? "pointer" : "not-allowed", color: input.trim() && !streaming ? "#fff" : "var(--muted)", fontSize: 18, transition: "all .2s", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          style={{ width: 23, height: 23, background: input.trim() && !streaming ? "var(--win-blue)" : "var(--win-gray)", border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", cursor: input.trim() && !streaming ? "pointer" : "not-allowed", color: input.trim() && !streaming ? "#fff" : "#808080", fontSize: 11, display: "flex", alignItems: "center", justifyContent: "center" }}>
           {streaming ? "⏳" : "→"}
         </button>
       </div>
@@ -1663,21 +1918,22 @@ ${original}`;
 
   return (
     <div style={{
-      border: `2px solid ${applied ? "var(--teal)" : "var(--line)"}`,
-      borderRadius: 16, overflow: "hidden", marginBottom: 20, transition: "border-color .3s",
-      background: applied ? "rgba(0,194,168,.02)" : "var(--white)",
+      border: applied ? "2px solid var(--win-blue)" : "2px solid", 
+      borderColor: applied ? "var(--win-blue)" : "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)",
+      marginBottom: 8,
+      background: applied ? "#e8f0ff" : "var(--win-gray)",
     }}>
       {/* Section header */}
-      <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--line)", background: applied ? "rgba(0,194,168,.05)" : "var(--white)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ padding: "6px 10px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--win-dark-gray)", background: applied ? "var(--win-blue)" : "var(--win-title-active)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: `rgba(${section.color},0.12)`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>{section.icon}</div>
           <div>
-            <div style={{ fontWeight: 800, fontSize: 15, fontFamily: "'Syne', sans-serif" }}>{section.label}</div>
-            <div style={{ color: "var(--muted)", fontSize: 12 }}>{section.desc}</div>
+            <div style={{ fontWeight: "bold", fontSize: 12, fontFamily: "inherit", color: "#fff" }}>{section.label}</div>
+            <div style={{ color: "rgba(255,255,255,0.8)", fontSize: 11 }}>{section.desc}</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          {applied && <span className="badge badge-teal">✓ Applied</span>}
+          {applied && <span className="badge badge-blue">✓ Applied</span>}
           <span className="badge" style={{ background: `rgba(${section.color},0.1)`, color: `rgb(${section.color})`, fontSize: 11 }}>+{section.scoreBoost} pts</span>
           {!loading && !improved && (
             <button className="btn btn-primary btn-sm" onClick={rewrite} style={{ gap: 6 }}>
@@ -1695,10 +1951,10 @@ ${original}`;
         <div style={{ display: "grid", gridTemplateColumns: improved ? "1fr 1fr" : "1fr", gap: 16 }}>
           {/* Original */}
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-              <span style={{ width: 8, height: 8, borderRadius: 2, background: "var(--red)", display: "inline-block" }} /> Original
+            <div style={{ fontSize: 11, fontWeight: 700, color: "#000", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+              <span style={{ width: 8, height: 8, borderRadius: 2, background: "#cc0000", display: "inline-block" }} /> Original
             </div>
-            <div style={{ background: "rgba(239,68,68,.03)", border: "1px solid rgba(239,68,68,.1)", borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: "var(--slate)", lineHeight: 1.75, minHeight: 80, whiteSpace: "pre-wrap" }}>
+            <div style={{ background: "rgba(239,68,68,.03)", border: "1px solid rgba(239,68,68,.1)", borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: "#444", lineHeight: 1.75, minHeight: 80, whiteSpace: "pre-wrap" }}>
               {original}
             </div>
           </div>
@@ -1706,18 +1962,18 @@ ${original}`;
           {/* Improved */}
           {improved && (
             <div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--teal)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ width: 8, height: 8, borderRadius: 2, background: "var(--teal)", display: "inline-block" }} />
-                AI Improved {streaming && <span style={{ width: 6, height: 6, borderRadius: 3, background: "var(--teal)", display: "inline-block", animation: "blink 0.7s step-end infinite" }} />}
+              <div style={{ fontSize: 11, fontWeight: 700, color: "var(--win-blue)", textTransform: "uppercase", letterSpacing: ".08em", marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ width: 8, height: 8, borderRadius: 2, background: "var(--win-blue)", display: "inline-block" }} />
+                AI Improved {streaming && <span style={{ width: 6, height: 6, borderRadius: 3, background: "var(--win-blue)", display: "inline-block", animation: "blink 0.7s step-end infinite" }} />}
               </div>
               {showEdit ? (
                 <textarea
                   value={edited}
                   onChange={e => setEdited(e.target.value)}
-                  style={{ width: "100%", background: "rgba(0,194,168,.04)", border: "1.5px solid var(--teal)", borderRadius: 10, padding: "14px 16px", fontSize: 13.5, lineHeight: 1.75, minHeight: 120, fontFamily: "'DM Sans', sans-serif", outline: "none", color: "var(--ink)" }}
+                  style={{ width: "100%", background: "rgba(0,0,128,0.08)", border: "1.5px solid var(--win-blue)", borderRadius: 10, padding: "14px 16px", fontSize: 13.5, lineHeight: 1.75, minHeight: 120, fontFamily: "'MS Sans Serif', inherit", outline: "none", color: "#000" }}
                 />
               ) : (
-                <div style={{ background: "rgba(0,194,168,.04)", border: "1.5px solid rgba(0,194,168,.25)", borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: "var(--ink)", lineHeight: 1.75, minHeight: 80, whiteSpace: "pre-wrap" }}>
+                <div style={{ background: "rgba(0,0,128,0.08)", border: "1.5px solid rgba(0,0,128,0.25)", borderRadius: 10, padding: "14px 16px", fontSize: 13.5, color: "#000", lineHeight: 1.75, minHeight: 80, whiteSpace: "pre-wrap" }}>
                   {improved}
                 </div>
               )}
@@ -1811,30 +2067,30 @@ function ImprovePage({ nav }) {
         {/* Score dashboard */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 16, marginBottom: 28 }}>
           <div className="card" style={{ textAlign: "center", padding: "20px 14px" }}>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 32, fontWeight: 800, color: "var(--muted)" }}>{mockAnalysis.atsScore}</div>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 3 }}>Current ATS Score</div>
+            <div style={{ fontFamily: "inherit", fontSize: 32, fontWeight: 800, color: "#000" }}>{mockAnalysis.atsScore}</div>
+            <div style={{ fontSize: 12, color: "#000", marginTop: 3 }}>Current ATS Score</div>
           </div>
-          <div className="card" style={{ textAlign: "center", padding: "20px 14px", border: "2px solid var(--teal)", background: "rgba(0,194,168,.04)" }}>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 32, fontWeight: 800, color: "var(--teal)" }}>{projectedScore}</div>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 3 }}>Projected Score</div>
-            {scoreBoost > 0 && <div style={{ fontSize: 11, color: "var(--teal)", fontWeight: 700, marginTop: 4 }}>+{scoreBoost} pts gained</div>}
-          </div>
-          <div className="card" style={{ textAlign: "center", padding: "20px 14px" }}>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 32, fontWeight: 800, color: "var(--blue)" }}>{appliedCount} / {sections.length}</div>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 3 }}>Sections Improved</div>
+          <div className="card" style={{ textAlign: "center", padding: "20px 14px", border: "2px solid var(--win-blue)", background: "rgba(0,0,128,0.08)" }}>
+            <div style={{ fontFamily: "inherit", fontSize: 32, fontWeight: 800, color: "var(--win-blue)" }}>{projectedScore}</div>
+            <div style={{ fontSize: 12, color: "#000", marginTop: 3 }}>Projected Score</div>
+            {scoreBoost > 0 && <div style={{ fontSize: 11, color: "var(--win-blue)", fontWeight: 700, marginTop: 4 }}>+{scoreBoost} pts gained</div>}
           </div>
           <div className="card" style={{ textAlign: "center", padding: "20px 14px" }}>
-            <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 32, fontWeight: 800, color: "var(--amber)" }}>+{totalPossibleBoost}</div>
-            <div style={{ fontSize: 12, color: "var(--muted)", marginTop: 3 }}>Max Score Gain</div>
+            <div style={{ fontFamily: "inherit", fontSize: 32, fontWeight: 800, color: "#0000cc" }}>{appliedCount} / {sections.length}</div>
+            <div style={{ fontSize: 12, color: "#000", marginTop: 3 }}>Sections Improved</div>
+          </div>
+          <div className="card" style={{ textAlign: "center", padding: "20px 14px" }}>
+            <div style={{ fontFamily: "inherit", fontSize: 32, fontWeight: 800, color: "#806000" }}>+{totalPossibleBoost}</div>
+            <div style={{ fontSize: 12, color: "#000", marginTop: 3 }}>Max Score Gain</div>
           </div>
         </div>
 
-        {/* Tab toggle */}
-        <div style={{ display: "flex", gap: 0, marginBottom: 28, background: "var(--white)", borderRadius: 12, border: "1px solid var(--line)", overflow: "hidden", width: "fit-content" }}>
-          <button onClick={() => setView("rewriter")} style={{ padding: "10px 24px", fontWeight: 700, fontSize: 14, cursor: "pointer", border: "none", fontFamily: "'DM Sans',sans-serif", background: view === "rewriter" ? "var(--teal)" : "transparent", color: view === "rewriter" ? "#fff" : "var(--muted)", transition: "all .2s" }}>
+        {/* Tab toggle — Win2k tab control style */}
+        <div className="tabs" style={{ marginBottom: 12 }}>
+          <button className={`tab ${view === "rewriter" ? "active" : ""}`} onClick={() => setView("rewriter")}>
             🤖 Section Rewriter
           </button>
-          <button onClick={() => setView("chat")} style={{ padding: "10px 24px", fontWeight: 700, fontSize: 14, cursor: "pointer", border: "none", fontFamily: "'DM Sans',sans-serif", background: view === "chat" ? "var(--teal)" : "transparent", color: view === "chat" ? "#fff" : "var(--muted)", transition: "all .2s" }}>
+          <button className={`tab ${view === "chat" ? "active" : ""}`} onClick={() => setView("chat")}>
             💬 AI Coach Chat
           </button>
         </div>
@@ -1858,10 +2114,10 @@ function ImprovePage({ nav }) {
             ))}
 
             {appliedCount === sections.length && (
-              <div style={{ textAlign: "center", padding: "32px 20px", background: "linear-gradient(135deg, rgba(0,194,168,.08), rgba(16,185,129,.08))", border: "2px solid var(--teal)", borderRadius: 20, marginTop: 8 }}>
+              <div style={{ textAlign: "center", padding: "16px 12px", background: "#e8f0ff", border: "2px solid var(--win-blue)", marginTop: 4 }}>
                 <div style={{ fontSize: 40, marginBottom: 12 }}>🎉</div>
-                <div style={{ fontFamily: "'Syne',sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 8 }}>All sections optimized!</div>
-                <div style={{ color: "var(--muted)", marginBottom: 24 }}>Your CV is now ATS-optimized. Estimated score: {projectedScore}/100</div>
+                <div style={{ fontFamily: "inherit", fontSize: 24, fontWeight: 800, marginBottom: 8 }}>All sections optimized!</div>
+                <div style={{ color: "#000", marginBottom: 24 }}>Your CV is now ATS-optimized. Estimated score: {projectedScore}/100</div>
                 <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
                   <button className="btn btn-primary btn-lg">⬇ Download Improved CV</button>
                   <button className="btn btn-dark btn-lg" onClick={() => nav("builder")}>🏗 Open in Builder</button>
@@ -1919,10 +2175,10 @@ function BuilderPage({ nav }) {
       </div>
       <div className="container">
         {/* Step progress */}
-        <div style={{ display: "flex", gap: 0, marginBottom: 32, background: "var(--white)", borderRadius: 12, border: "1px solid var(--line)", overflow: "hidden" }}>
+        <div style={{ display: "flex", gap: 0, marginBottom: 32, background: "var(--win-gray)", borderRadius: 12, border: "1px solid var(--win-dark-gray)", overflow: "hidden" }}>
           {steps.map((s, i) => (
-            <div key={s} onClick={() => setStep(i)} style={{ flex: 1, padding: "12px 8px", textAlign: "center", cursor: "pointer", borderRight: i < steps.length - 1 ? "1px solid var(--line)" : "none", background: step === i ? "var(--teal)" : step > i ? "rgba(0,194,168,.1)" : "var(--white)", transition: "all .2s" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, color: step === i ? "#fff" : step > i ? "var(--teal)" : "var(--muted)", textTransform: "uppercase", letterSpacing: ".06em" }}>{i + 1}. {s}</div>
+            <div key={s} onClick={() => setStep(i)} style={{ flex: 1, padding: "12px 8px", textAlign: "center", cursor: "pointer", borderRight: i < steps.length - 1 ? "1px solid var(--win-dark-gray)" : "none", background: step === i ? "var(--win-blue)" : step > i ? "rgba(0,0,128,0.1)" : "var(--win-gray)", transition: "all .2s" }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: step === i ? "#fff" : step > i ? "var(--win-blue)" : "#000", textTransform: "uppercase", letterSpacing: ".06em" }}>{i + 1}. {s}</div>
             </div>
           ))}
         </div>
@@ -1935,9 +2191,9 @@ function BuilderPage({ nav }) {
                 <h3 style={{ marginBottom: 20 }}>Choose a Template</h3>
                 <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                   {templates.map(t => (
-                    <div key={t.id} onClick={() => setTemplate(t.id)} style={{ padding: "16px 18px", border: `2px solid ${template === t.id ? "var(--teal)" : "var(--line)"}`, borderRadius: 10, cursor: "pointer", background: template === t.id ? "rgba(0,194,168,.05)" : "var(--white)" }}>
+                    <div key={t.id} onClick={() => setTemplate(t.id)} style={{ padding: "16px 18px", border: `2px solid ${template === t.id ? "var(--win-blue)" : "var(--win-dark-gray)"}`, borderRadius: 10, cursor: "pointer", background: template === t.id ? "rgba(0,0,128,0.05)" : "var(--win-gray)" }}>
                       <div style={{ fontWeight: 700, marginBottom: 3 }}>{t.name}</div>
-                      <div style={{ fontSize: 13, color: "var(--muted)" }}>{t.desc}</div>
+                      <div style={{ fontSize: 13, color: "#000" }}>{t.desc}</div>
                     </div>
                   ))}
                 </div>
@@ -1991,7 +2247,7 @@ function BuilderPage({ nav }) {
 
           {/* Live Preview */}
           <div className="card" style={{ padding: 0, overflow: "hidden", position: "sticky", top: 80 }}>
-            <div style={{ padding: "14px 18px", background: "var(--ink)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ padding: "14px 18px", background: "#000", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <span style={{ color: "#fff", fontSize: 13, fontWeight: 700 }}>Live Preview — {templates.find(t => t.id === template)?.name}</span>
               <div style={{ display: "flex", gap: 8 }}>
                 <button className="btn btn-sm" style={{ background: "rgba(255,255,255,.1)", color: "#fff", border: "none" }}>⬇ PDF</button>
@@ -2000,8 +2256,8 @@ function BuilderPage({ nav }) {
             </div>
             <div style={{ padding: 20, maxHeight: 580, overflowY: "auto" }}>
               <div className="cv-preview">
-                <div style={{ textAlign: "center", marginBottom: 16, borderBottom: "3px solid #0a0f1e", paddingBottom: 14 }}>
-                  <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Syne',sans-serif" }}>{form.name || "Your Name"}</div>
+                <div style={{ textAlign: "center", marginBottom: 16, borderBottom: "2px solid #000", paddingBottom: 14 }}>
+                  <div style={{ fontSize: 20, fontWeight: 800, fontFamily: "inherit" }}>{form.name || "Your Name"}</div>
                   <div style={{ color: "#555", fontSize: 13, marginTop: 3 }}>{form.title}</div>
                   <div style={{ color: "#777", fontSize: 11, marginTop: 6 }}>{form.email} · {form.phone} · {form.location}</div>
                   <div style={{ color: "#777", fontSize: 11 }}>{form.linkedin}</div>
@@ -2053,7 +2309,7 @@ function DashboardPage({ nav }) {
       <div className="container">
         {/* Stats */}
         <div className="grid-4" style={{ marginBottom: 32 }}>
-          {[["📄", "3", "CVs Uploaded", "rgba(59,130,246,.1)"], ["📊", "8", "Analyses Run", "rgba(0,194,168,.1)"], ["⭐", "85", "Best Score", "rgba(245,158,11,.1)"], ["🎯", "3", "Targeted Jobs", "rgba(139,92,246,.1)"]].map(([icon, val, lbl, bg]) => (
+          {[["📄", "3", "CVs Uploaded", "rgba(59,130,246,.1)"], ["📊", "8", "Analyses Run", "rgba(0,0,128,0.1)"], ["⭐", "85", "Best Score", "rgba(245,158,11,.1)"], ["🎯", "3", "Targeted Jobs", "rgba(139,92,246,.1)"]].map(([icon, val, lbl, bg]) => (
             <div className="card" key={lbl}>
               <div className="dash-stat">
                 <div className="dash-stat-icon" style={{ background: bg, fontSize: 22 }}>{icon}</div>
@@ -2071,14 +2327,14 @@ function DashboardPage({ nav }) {
               <button className="btn btn-primary btn-sm" onClick={() => nav("upload")}>+ Upload New</button>
             </div>
             {cvs.map(cv => (
-              <div key={cv.name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--line)" }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>📄</div>
+              <div key={cv.name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--win-dark-gray)" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "var(--win-gray)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>📄</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{cv.name}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 12 }}>{cv.date}</div>
+                  <div style={{ color: "#000", fontSize: 12 }}>{cv.date}</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
-                  <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 20, color: cv.score >= 80 ? "var(--green)" : cv.score >= 65 ? "var(--amber)" : "var(--red)" }}>{cv.score}</div>
+                  <div style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 20, color: cv.score >= 80 ? "#008000" : cv.score >= 65 ? "#806000" : "#cc0000" }}>{cv.score}</div>
                   <span className={`badge ${cv.score >= 80 ? "badge-green" : cv.score >= 65 ? "badge-amber" : "badge-red"}`} style={{ fontSize: 10 }}>{cv.status}</span>
                 </div>
                 <button className="btn btn-ghost btn-sm" onClick={() => nav("results")}>View</button>
@@ -2093,15 +2349,15 @@ function DashboardPage({ nav }) {
               <button className="btn btn-secondary btn-sm" onClick={() => nav("jobdesc")}>+ Add Job</button>
             </div>
             {jobs.map(j => (
-              <div key={j.title} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--line)" }}>
+              <div key={j.title} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--win-dark-gray)" }}>
                 <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(59,130,246,.1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18 }}>💼</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, fontSize: 13 }}>{j.title}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 12 }}>{j.company}</div>
+                  <div style={{ color: "#000", fontSize: 12 }}>{j.company}</div>
                 </div>
                 <div style={{ textAlign: "center" }}>
-                  <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 18, color: "var(--blue)" }}>{j.match}%</div>
-                  <div style={{ fontSize: 11, color: "var(--muted)" }}>Match</div>
+                  <div style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 18, color: "#0000cc" }}>{j.match}%</div>
+                  <div style={{ fontSize: 11, color: "#000" }}>Match</div>
                 </div>
                 <button className="btn btn-ghost btn-sm" onClick={() => nav("results")}>Optimize</button>
               </div>
@@ -2114,15 +2370,15 @@ function DashboardPage({ nav }) {
             <h3 style={{ marginBottom: 20 }}>Recent Activity</h3>
             <div className="timeline">
               {[
-                { n: 1, text: "CV 'software_engineer_cv.pdf' analyzed — ATS Score: 72", time: "2 hours ago", c: "var(--teal)" },
-                { n: 2, text: "Added job: Senior Frontend Engineer at Acme Corp — 68% match", time: "2 hours ago", c: "var(--blue)" },
-                { n: 3, text: "CV 'product_manager_cv.docx' optimized — Score improved 61 → 85", time: "1 week ago", c: "var(--green)" },
-                { n: 4, text: "New CV uploaded: data_analyst_cv.pdf", time: "2 weeks ago", c: "var(--amber)" },
+                { n: 1, text: "CV 'software_engineer_cv.pdf' analyzed — ATS Score: 72", time: "2 hours ago", c: "var(--win-blue)" },
+                { n: 2, text: "Added job: Senior Frontend Engineer at Acme Corp — 68% match", time: "2 hours ago", c: "#0000cc" },
+                { n: 3, text: "CV 'product_manager_cv.docx' optimized — Score improved 61 → 85", time: "1 week ago", c: "#008000" },
+                { n: 4, text: "New CV uploaded: data_analyst_cv.pdf", time: "2 weeks ago", c: "#806000" },
               ].map((a, i) => (
                 <div className="tl-item" key={i}>
                   <div className="tl-dot" style={{ background: a.c }}>{a.n}</div>
                   <div style={{ fontSize: 14 }}>{a.text}</div>
-                  <div style={{ color: "var(--muted)", fontSize: 12, marginTop: 3 }}>{a.time}</div>
+                  <div style={{ color: "#000", fontSize: 12, marginTop: 3 }}>{a.time}</div>
                 </div>
               ))}
             </div>
@@ -2140,17 +2396,17 @@ function PricingPage({ nav }) {
   const [annual, setAnnual] = useState(false);
   const plans = [
     {
-      name: "Free", price: 0, per: "", color: "var(--slate)",
+      name: "Free", price: 0, per: "", color: "#444",
       features: ["1 CV analysis per month", "Basic ATS score", "Top 5 missing keywords", "Formatting check", "Limited suggestions"],
       cta: "Get Started Free", featured: false,
     },
     {
-      name: "Pro", price: annual ? 15 : 19, per: "/month", color: "var(--teal)",
+      name: "Pro", price: annual ? 15 : 19, per: "/month", color: "var(--win-blue)",
       features: ["Unlimited CV analyses", "Full keyword analysis", "AI-powered rewrites", "Download improved CV", "Section-by-section score", "Job description matching", "Priority support"],
       cta: "Start Pro Trial", featured: true,
     },
     {
-      name: "Premium", price: annual ? 29 : 39, per: "/month", color: "var(--purple)",
+      name: "Premium", price: annual ? 29 : 39, per: "/month", color: "#804080",
       features: ["Everything in Pro", "ATS-friendly CV templates", "Cover letter generator", "LinkedIn profile optimizer", "Interview tips & prep", "Unlimited job targeting", "Dedicated success manager"],
       cta: "Start Premium Trial", featured: false,
     },
@@ -2160,12 +2416,12 @@ function PricingPage({ nav }) {
     <>
       <div className="page-header" style={{ textAlign: "center" }}>
         <div className="container">
-          <div className="badge badge-teal" style={{ marginBottom: 12 }}>Pricing</div>
+          <div className="badge badge-blue" style={{ marginBottom: 12 }}>Pricing</div>
           <h1 style={{ fontSize: 44 }}>Simple, transparent pricing</h1>
-          <p style={{ color: "var(--muted)", fontSize: 17, marginTop: 10 }}>Start free, upgrade when you're ready.</p>
-          <div style={{ display: "flex", gap: 0, justifyContent: "center", marginTop: 24, background: "var(--line)", borderRadius: 10, padding: 4, width: "fit-content", margin: "24px auto 0" }}>
-            <button onClick={() => setAnnual(false)} className="btn btn-sm" style={{ background: !annual ? "var(--white)" : "transparent", color: !annual ? "var(--ink)" : "var(--muted)", border: "none", boxShadow: !annual ? "0 1px 4px rgba(0,0,0,.1)" : "none" }}>Monthly</button>
-            <button onClick={() => setAnnual(true)} className="btn btn-sm" style={{ background: annual ? "var(--white)" : "transparent", color: annual ? "var(--ink)" : "var(--muted)", border: "none", boxShadow: annual ? "0 1px 4px rgba(0,0,0,.1)" : "none" }}>Annual <span style={{ color: "var(--teal)", fontSize: 11, fontWeight: 700 }}>Save 20%</span></button>
+          <p style={{ color: "#000", fontSize: 17, marginTop: 10 }}>Start free, upgrade when you're ready.</p>
+          <div style={{ display: "flex", gap: 0, justifyContent: "center", marginTop: 24, background: "var(--win-dark-gray)", borderRadius: 10, padding: 4, width: "fit-content", margin: "24px auto 0" }}>
+            <button onClick={() => setAnnual(false)} className="btn btn-sm" style={{ background: !annual ? "var(--win-gray)" : "transparent", color: !annual ? "#000" : "#000", border: "none", boxShadow: !annual ? "0 1px 4px rgba(0,0,0,.1)" : "none" }}>Monthly</button>
+            <button onClick={() => setAnnual(true)} className="btn btn-sm" style={{ background: annual ? "var(--win-gray)" : "transparent", color: annual ? "#000" : "#000", border: "none", boxShadow: annual ? "0 1px 4px rgba(0,0,0,.1)" : "none" }}>Annual <span style={{ color: "var(--win-blue)", fontSize: 11, fontWeight: 700 }}>Save 20%</span></button>
           </div>
         </div>
       </div>
@@ -2173,28 +2429,28 @@ function PricingPage({ nav }) {
         <div className="grid-3">
           {plans.map(p => (
             <div className={`pricing-card ${p.featured ? "featured" : ""}`} key={p.name}>
-              {p.featured && <div className="pricing-badge"><span className="badge badge-teal">Most Popular</span></div>}
+              {p.featured && <div className="pricing-badge"><span className="badge badge-blue">Most Popular</span></div>}
               <div style={{ marginBottom: 24 }}>
-                <div style={{ fontFamily: "'Syne',sans-serif", fontWeight: 800, fontSize: 20, marginBottom: 4, color: p.color }}>{p.name}</div>
+                <div style={{ fontFamily: "inherit", fontWeight: 800, fontSize: 20, marginBottom: 4, color: p.color }}>{p.name}</div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
                   <span className="price-num">${p.price}</span>
                   <span className="price-per">{p.per}</span>
                 </div>
               </div>
-              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 20, marginBottom: 24 }}>
+              <div style={{ borderTop: "1px solid var(--win-dark-gray)", paddingTop: 20, marginBottom: 24 }}>
                 {p.features.map(f => (
                   <div key={f} style={{ display: "flex", gap: 10, marginBottom: 10, fontSize: 14 }}>
                     <span style={{ color: p.color, fontWeight: 700, flexShrink: 0 }}>✓</span>{f}
                   </div>
                 ))}
               </div>
-              <button className={`btn btn-full ${p.featured ? "btn-primary" : "btn-secondary"}`} onClick={() => nav("upload")} style={p.name === "Premium" ? { background: "var(--purple)", color: "#fff", border: "none" } : {}}>
+              <button className={`btn btn-full ${p.featured ? "btn-primary" : "btn-secondary"}`} onClick={() => nav("upload")} style={p.name === "Premium" ? { background: "#804080", color: "#fff", border: "none" } : {}}>
                 {p.cta}
               </button>
             </div>
           ))}
         </div>
-        <div style={{ textAlign: "center", marginTop: 40, color: "var(--muted)", fontSize: 14 }}>
+        <div style={{ textAlign: "center", marginTop: 40, color: "#000", fontSize: 14 }}>
           All plans include a 7-day free trial. No credit card required to start.
         </div>
       </div>
@@ -2261,8 +2517,8 @@ Alex Johnson`;
               {generated && <button className="btn btn-secondary btn-sm">⬇ Download</button>}
             </div>
             {generated
-              ? <textarea value={sampleLetter} readOnly style={{ minHeight: 400, fontSize: 13, lineHeight: 1.8, color: "var(--ink)" }} />
-              : <div style={{ minHeight: 300, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--muted)", fontSize: 14, textAlign: "center", padding: 40, background: "var(--bg)", borderRadius: 10 }}>
+              ? <textarea value={sampleLetter} readOnly style={{ minHeight: 400, fontSize: 13, lineHeight: 1.8, color: "#000" }} />
+              : <div style={{ minHeight: 300, display: "flex", alignItems: "center", justifyContent: "center", color: "#000", fontSize: 14, textAlign: "center", padding: 40, background: "var(--win-gray)", borderRadius: 10 }}>
                 Your cover letter will appear here after generation.
               </div>
             }
@@ -2280,26 +2536,28 @@ function Footer({ nav }) {
   return (
     <footer className="footer">
       <div className="container">
-        <div className="grid-4">
-          <div>
-            <div className="footer-brand"><span style={{ color: "var(--teal)" }}>⬡</span> ATSPro</div>
-            <p style={{ fontSize: 14, color: "rgba(255,255,255,.45)", lineHeight: 1.7, marginTop: 8 }}>AI-powered CV optimization to help you land more interviews.</p>
-          </div>
-          {[
-            { title: "Product", links: [["Upload CV", "upload"], ["CV Builder", "builder"], ["Pricing", "pricing"], ["Dashboard", "dashboard"]] },
-            { title: "Tools", links: [["Cover Letter", "coverletter"], ["ATS Checker", "upload"], ["Interview Tips", "home"], ["Resources", "home"]] },
-            { title: "Company", links: [["About", "home"], ["Contact", "home"], ["Privacy Policy", "home"], ["Terms of Service", "home"]] },
-          ].map(col => (
-            <div key={col.title}>
-              <div style={{ color: "#fff", fontWeight: 700, fontSize: 14, marginBottom: 14 }}>{col.title}</div>
-              <div className="footer-links">
-                {col.links.map(([l, p]) => <button key={l} className="footer-link" onClick={() => nav(p)}>{l}</button>)}
-              </div>
+        <div style={{ border: "1px solid var(--win-dark-gray)", padding: 12, background: "var(--win-gray)", marginBottom: 4 }}>
+          <div className="grid-4">
+            <div>
+              <div className="footer-brand"><span>⬡</span> ATSPro</div>
+              <p style={{ fontSize: 11, color: "#000", lineHeight: 1.6, marginTop: 4 }}>AI-powered CV optimization to help you land more interviews.</p>
             </div>
-          ))}
+            {[
+              { title: "Product", links: [["Upload CV", "upload"], ["CV Builder", "builder"], ["Pricing", "pricing"], ["Dashboard", "dashboard"]] },
+              { title: "Tools", links: [["Cover Letter", "coverletter"], ["ATS Checker", "upload"], ["Interview Tips", "home"], ["Resources", "home"]] },
+              { title: "Company", links: [["About", "home"], ["Contact", "home"], ["Privacy Policy", "home"], ["Terms of Service", "home"]] },
+            ].map(col => (
+              <div key={col.title}>
+                <div style={{ color: "#000", fontWeight: "bold", fontSize: 11, marginBottom: 6 }}>{col.title}</div>
+                <div className="footer-links">
+                  {col.links.map(([l, p]) => <button key={l} className="footer-link" onClick={() => nav(p)}>{l}</button>)}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="footer-bottom">
-          <span>© 2025 ATSPro · Built with AI · All rights reserved</span>
+        <div className="footer-bottom" style={{ color: "#000" }}>
+          <span>© 2025 ATSPro · Built with AI · All rights reserved · Microsoft Internet Explorer 6.0 recommended</span>
         </div>
       </div>
     </footer>
@@ -2326,9 +2584,10 @@ export default function App() {
     <>
       <style>{CSS}</style>
       <div className="app">
+        {/* Win2K Taskbar */}
         <nav className="nav">
           <div className="nav-brand" onClick={() => nav("home")}>
-            <span style={{ color: "var(--teal)" }}>⬡</span> ATSPro
+            <span style={{ marginRight: 3 }}>⬡</span> ATSPro
           </div>
           <div className="nav-links">
             {navLinks.map(l => (
@@ -2338,20 +2597,50 @@ export default function App() {
           <div className="nav-actions">
             <button className="btn btn-secondary btn-sm" onClick={() => nav("dashboard")}>Sign In</button>
             <button className="btn btn-primary btn-sm" onClick={() => nav("upload")}>Start Free</button>
+            {/* Clock */}
+            <div style={{ padding: "2px 8px", background: "var(--win-gray)", borderTop: "1px solid var(--win-shadow)", borderLeft: "1px solid var(--win-shadow)", borderBottom: "1px solid var(--win-highlight)", borderRight: "1px solid var(--win-highlight)", fontSize: 11, display: "flex", alignItems: "center" }}>
+              {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </div>
           </div>
         </nav>
 
-        <main className="main">
-          {page === "home" && <HomePage nav={nav} />}
-          {page === "upload" && <UploadPage nav={nav} />}
-          {page === "jobdesc" && <JobDescPage nav={nav} />}
-          {page === "results" && <ResultsPage nav={nav} />}
-          {page === "improve" && <ImprovePage nav={nav} />}
-          {page === "builder" && <BuilderPage nav={nav} />}
-          {page === "dashboard" && <DashboardPage nav={nav} />}
-          {page === "pricing" && <PricingPage nav={nav} />}
-          {page === "coverletter" && <CoverLetterPage nav={nav} />}
-        </main>
+        {/* Win2K Desktop area */}
+        <div style={{ background: "var(--win-desktop)", flex: 1, padding: 6 }}>
+          {/* Main application window */}
+          <div style={{ background: "var(--win-gray)", border: "2px solid", borderColor: "var(--win-highlight) var(--win-shadow) var(--win-shadow) var(--win-highlight)", minHeight: "calc(100vh - 60px)" }}>
+            <div className="win-title-bar">
+              <span>
+                <span className="win-title-icon">📊</span>
+                ATSPro — {page === "home" ? "Welcome" : page === "upload" ? "Upload CV" : page === "jobdesc" ? "Job Description" : page === "results" ? "Analysis Results" : page === "improve" ? "AI Improve" : page === "builder" ? "CV Builder" : page === "dashboard" ? "Dashboard" : page === "pricing" ? "Pricing" : "Cover Letter Generator"}
+              </span>
+              <div className="win-title-buttons">
+                <div className="win-title-btn">_</div>
+                <div className="win-title-btn">□</div>
+                <div className="win-title-btn close">✕</div>
+              </div>
+            </div>
+            {/* Menu bar */}
+            <div style={{ background: "var(--win-gray)", borderBottom: "1px solid var(--win-dark-gray)", padding: "2px 4px", display: "flex", gap: 0 }}>
+              {["File", "Edit", "View", "Tools", "Help"].map(m => (
+                <button key={m} style={{ background: "none", border: "none", fontFamily: "inherit", fontSize: 11, padding: "2px 8px", cursor: "pointer", color: "#000" }}
+                  onMouseEnter={e => { e.target.style.background = "var(--win-blue)"; e.target.style.color = "#fff"; }}
+                  onMouseLeave={e => { e.target.style.background = "none"; e.target.style.color = "#000"; }}
+                >{m}</button>
+              ))}
+            </div>
+            <main className="main">
+              {page === "home" && <HomePage nav={nav} />}
+              {page === "upload" && <UploadPage nav={nav} />}
+              {page === "jobdesc" && <JobDescPage nav={nav} />}
+              {page === "results" && <ResultsPage nav={nav} />}
+              {page === "improve" && <ImprovePage nav={nav} />}
+              {page === "builder" && <BuilderPage nav={nav} />}
+              {page === "dashboard" && <DashboardPage nav={nav} />}
+              {page === "pricing" && <PricingPage nav={nav} />}
+              {page === "coverletter" && <CoverLetterPage nav={nav} />}
+            </main>
+          </div>
+        </div>
 
         <Footer nav={nav} />
       </div>
